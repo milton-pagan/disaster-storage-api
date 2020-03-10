@@ -183,3 +183,4 @@ dmypy.json
 .history
 
 # End of https://www.gitignore.io/api/linux,emacs,python,visualstudiocode
+.vscode/settings.json
