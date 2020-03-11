@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from ds_app.handlers.product_handler import ProductHandler
+from 
 
 
 app = Flask(__name__)
@@ -27,7 +28,8 @@ def get_all_customers():
 		return 'all customers'
 
 	elif request.method == 'POST':
-		return 'customer registered'
+		print("PAYLOAD:", request.json)
+		return CustomerHandler().add_customer(request.json)
 	return
 
 @app.route('/disasterStorage/users/<int:customer_id>')
