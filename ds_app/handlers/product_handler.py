@@ -18,7 +18,7 @@ class ProductHandler(object):
 		result_dict = []
 		for row in result:
 			result_dict.append(self.build_product(row))
-		return jsonify(Parts=result_dict)
+		return jsonify(Parts=result_dict), 200
 
 	def get_all_detailed_products(self):
 		return
