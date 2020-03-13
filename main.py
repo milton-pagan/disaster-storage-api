@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from ds_app.handlers.product_handler import ProductHandler 
 from ds_app.handlers.customer_handler import CustomerHandler
+from ds_app.handlers.user_handler import UserHandler
 
 app = Flask(__name__)
 CORS(app)
@@ -11,24 +12,31 @@ def greet():
 
 ### USERS ###
 
-@app.route('/disasterStorage/users', methods=['GET'])
+@app.route('/disasterStorage/users',  methods=['GET', 'POST'])
 def get_all_users():
-	return "Dummy return"
+	if not request.args:
+		if request.method == 'GET':
+			return UserHandler().get_all_users()
 
-@app.route('/disasterStorage/users/<int:user_id>')
-def get_user_by_id(user_id):
+	elif request.method == 'GET' and 'd' in request.args:
+		return "detailed user"
 	return
+
+@app.route('/disasterStorage/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
+def get_user_by_id(user_id):
+	if request.method == 'GET':
+		return UserHandler().get_user_by_id(user_id)
+
+	elif request.method == 'PUT':
+		return
+
+	else:
+		return
 
 ### CUSTOMERS ###
 
 @app.route('/disasterStorage/users/customers', methods=['GET', 'POST'])
 def get_all_customers():
-	if request.method == 'GET':
-		return 'all customers'
-
-	else:
-		print("PAYLOAD:", request.json)
-		return CustomerHandler().add_customer(request.json)
 	return
 
 @app.route('/disasterStorage/users/<int:customer_id>')
