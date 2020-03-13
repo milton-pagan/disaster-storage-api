@@ -12,17 +12,13 @@ def greet():
 
 ### USERS ###
 
-@app.route('/disasterStorage/users',  methods=['GET', 'POST'])
+@app.route('/disasterStorage/users',  methods=['GET'])
 def get_all_users():
-	if not request.args:
 		if request.method == 'GET':
 			return UserHandler().get_all_users()
+		return
 
-	elif request.method == 'GET' and 'd' in request.args:
-		return "detailed user"
-	return
-
-@app.route('/disasterStorage/users/<int:user_id>', methods=['GET', 'PUT', 'DELETE'])
+@app.route('/disasterStorage/users/<int:user_id>', methods=['GET', 'PUT'])
 def get_user_by_id(user_id):
 	if request.method == 'GET':
 		return UserHandler().get_user_by_id(user_id)
@@ -39,7 +35,7 @@ def get_user_by_id(user_id):
 def get_all_customers():
 	return
 
-@app.route('/disasterStorage/users/<int:customer_id>')
+@app.route('/disasterStorage/users/<int:customer_id>', methods=['GET', 'PUT', 'DELETE'])
 def get_customer_by_id(customer_id):
 	return
 

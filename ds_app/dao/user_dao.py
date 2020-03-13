@@ -11,5 +11,5 @@ class UserDAO(object):
     def get_user_by_id(self, user_id):
         return [(2, 'milton.pagan1', 'malta4321', 7877774444)]
 
-    def insert(self, user_id, username, password, phone):
-        return user_id
+    def insert(self, username, password, phone):
+        return [(1, 'dionel.martinez', 'dionil1234', 7877775555)]

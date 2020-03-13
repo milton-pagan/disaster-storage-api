@@ -26,7 +26,25 @@ class UserHandler(object):
         if not result:
             return ErrorHandler().not_found_error()
         else:
-            return jsonify(user=[self.build_user_dict(result[0])])
+            return jsonify(user=[self.build_user_dict(result[0])]), 200
 
+    def insert_user(self, form):
+        if form and len(form) == 3:
+            username = form['username']
+            password = form['password']
+            phone_id = form['phone_id']
+            if username and password and phone_id:
+                result = UserDAO()
+                user_id = result.insert(username, password, phone_id)
+                result_dict = {}
+                result_dict["user_id"] = user_id
+                result_dict["username"] = username
+                result_dict["password"] = password
+                result_dict["phone_id"] = phone_id
+                return jsonify(User=result_dict), 201
+            else:
+                return jsonify(Error="Malformed post request")
+        else:
+            return jsonify(Error="Malformed post request")
 
 
