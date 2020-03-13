@@ -12,4 +12,4 @@ class UserDAO(object):
         return [(2, 'milton.pagan1', 'malta4321', 7877774444)]
 
     def insert(self, username, password, phone):
-        return [(1, 'dionel.martinez', 'dionil1234', 7877775555)]
+        return 1
