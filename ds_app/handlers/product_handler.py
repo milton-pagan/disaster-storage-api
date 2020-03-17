@@ -25,7 +25,6 @@ class ProductHandler(object):
         result = ProductDAO().get_all_detailed_products()
         return jsonify(detailed_parts=result), 200
 
-    # DEPRECATED
     def get_available_products(self):
         result = ProductDAO().get_available_products()
         result_dict = []
@@ -45,31 +44,12 @@ class ProductHandler(object):
             return ErrorHandler().not_found()
         return jsonify(part=result)
 
-    def search_product(self, args):
+    def search_available_product(self, args):
         dao = ProductDAO()
-
         product_name = args.get("product_name")
-        product_price = args.get("product_price")
-        method = args.get("method")
 
-        if product_name and not product_price:
-            result = dao.get_products_by_name(product_name)
-
-        elif product_price and not product_name and method == ">":
-            result = dao.get_products_by_greater_price(product_price)
-
-        elif product_price and not product_name and method == "<":
-            result = dao.get_products_by_smaller_price(product_price)
-
-        elif product_name and product_price and method == ">":
-            result = dao.get_products_by_name_and_greater_price(
-                product_name, product_price
-            )
-
-        elif product_name and product_price and method == "<":
-            result = dao.get_products_by_name_and_smaller_price(
-                product_name, product_price
-            )
+        if product_name:
+            result = dao.get_available_products_by_name(product_name)
 
         else:
             return ErrorHandler().bad_request()
@@ -79,6 +59,20 @@ class ProductHandler(object):
             result_dict.append(self.build_product(record))
         return jsonify(parts=result_dict), 200
 
-    # DEPRECATED
-    def search_available(self, args):
-        return
+    def insert_product(self, payload):
+        dao = ProductDAO()
+
+        if len(payload) != 6:
+            return ErrorHandler().bad_request()
+
+        else:
+            
+    
+    def update_product(self, product_id, payload):
+        dao = ProductDAO()
+
+        if not self.get_product_by_id(product_id):
+            return ErrorHandler().not_found()
+
+
+

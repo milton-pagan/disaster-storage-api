@@ -56,7 +56,6 @@ class ProductDAO(object):
             },
         ]
 
-    # DEPRECATED
     def get_available_products(self):
         return [
             (1, "water bottle", 100, 0.0, "bottle of water", 1),
@@ -83,25 +82,6 @@ class ProductDAO(object):
             }
         ]
 
-    def get_products_by_name(self, product_name):
-        # Query by name, sort by name
+    def get_available_products_by_name(self, product_name):
+        # Query by name and quantity > 0, sort by name
         return [(3, "ibuprofen", 20, 4.0, "generic", 1)]
-
-    def get_products_by_smaller_price(self, product_price):
-        # Query by price, sort by name
-        return [
-            (2, "bouillon sausages", 50, 0.0, "8 count can", 2),
-            (1, "water bottle", 100, 0.0, "bottle of water", 1),
-        ]
-
-    def get_products_by_greater_price(self, product_price):
-        # Query by price, sort by name
-        return [(3, "ibuprofen", 20, 4.0, "generic", 1)]
-
-    def get_products_by_name_and_smaller_price(self, product_name, product_price):
-        # Query by name and price, sort by name
-        return [(1, "water bottle", 100, 0, "bottle of water", 1)]
-
-    def get_products_by_name_and_greater_price(self, product_name, product_price):
-        # Query by name and price, sort by name
-        return []

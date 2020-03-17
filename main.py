@@ -85,16 +85,12 @@ def get_all_products():
             return ProductHandler().get_all_products()
         elif "d" in request.args:
             return ProductHandler().get_all_detailed_products()
-        else:
-            return ProductHandler().search_product(request.args)
 
     elif request.method == "POST":
         pass
 
 
-@app.route(
-    "/disasterStorage/products/<int:product_id>", methods=["GET", "PUT", "DELETE"]
-)
+@app.route("/disasterStorage/products/<int:product_id>", methods=["GET", "PUT", "DELETE"])
 def get_product_by_id(product_id):
     if request.method == "GET":
         if "d" in request.args:
@@ -108,15 +104,13 @@ def get_product_by_id(product_id):
     else:
         return
 
-
-# DEPRECATED
 @app.route("/disasterStorage/products/available")
 def get_available_products():
     if not request.args:
         return ProductHandler().get_available_products()
 
     else:
-        return "Keyword search avail"
+        return ProductHandler().search_available_product(request.args)
 
 
 if __name__ == "__main__":
