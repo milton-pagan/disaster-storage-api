@@ -107,7 +107,7 @@ def get_product_by_id(product_id):
         return ProductHandler().update_product(product_id, request.json)
 
     else:
-        return
+        return ProductHandler().delete_product(product_id)
 
 
 @app.route("/disasterStorage/products/available")
@@ -116,7 +116,10 @@ def get_available_products():
         return ProductHandler().get_available_products()
 
     else:
-        return ProductHandler().search_available_product(request.args)
+        if 'd' in request.args:
+            return ProductHandler().get_detailed_available_products()
+        else:
+            return ProductHandler().search_available_product(request.args)
 
 
 if __name__ == "__main__":

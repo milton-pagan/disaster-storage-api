@@ -15,40 +15,39 @@ class ProductHandler(object):
         object_dict["location_id"] = record[5]
         return object_dict
 
+    # General product operations
+
     def get_all_products(self):
         result = ProductDAO().get_all_products()
         result_dict = []
         for record in result:
             result_dict.append(self.build_product(record))
-        return jsonify(parts=result_dict), 200
+        return jsonify(products=result_dict), 200
 
     def get_all_detailed_products(self):
         result = ProductDAO().get_all_detailed_products()
-        return jsonify(detailed_parts=result), 200
+        return jsonify(detailed_products=result), 200
+
+    # Available product operations
 
     def get_available_products(self):
         result = ProductDAO().get_available_products()
         result_dict = []
         for record in result:
             result_dict.append(self.build_product(record))
-        return jsonify(available_parts=result_dict), 200
+        return jsonify(available_products=result_dict), 200
 
-    def get_product_by_id(self, product_id):
-        result = ProductDAO().get_product_by_id(product_id)
-        if not result:
-            return ErrorHandler().not_found()
-        return jsonify(part=[self.build_product(result[0])])
-
-    def get_detailed_product_by_id(self, product_id):
-        result = ProductDAO().get_detailed_product_by_id(product_id)
-        if not result:
-            return ErrorHandler().not_found()
-        return jsonify(part=result)
+    def get_detailed_available_products(self):
+        result = ProductDAO().get_detailed_available_products()
+        return jsonify(available_products=result), 200
 
     def search_available_product(self, args):
         dao = ProductDAO()
-        product_name = args.get("product_name")
-
+        try:
+            product_name = args.get("product_name")
+        except KeyError:
+            return ErrorHandler().bad_request()
+            
         if product_name:
             result = dao.get_available_products_by_name(product_name)
 
@@ -58,7 +57,23 @@ class ProductHandler(object):
         result_dict = []
         for record in result:
             result_dict.append(self.build_product(record))
-        return jsonify(parts=result_dict), 200
+        return jsonify(products=result_dict), 200
+
+    # Operations by product id
+
+    def get_product_by_id(self, product_id):
+        result = ProductDAO().get_product_by_id(product_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(product=[self.build_product(result[0])]), 200
+
+    def get_detailed_product_by_id(self, product_id):
+        result = ProductDAO().get_detailed_product_by_id(product_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(product=result), 200
+
+    # Product insertion, update, and deletion
 
     def insert_product(self, payload):
         try:
@@ -87,15 +102,18 @@ class ProductHandler(object):
                 product_description,
                 location_id,
             )
-            return self.build_product(
-                (
-                    product_id,
-                    product_name,
-                    product_quantity,
-                    product_price,
-                    product_description,
-                    location_id,
-                )
+            return (
+                self.build_product(
+                    (
+                        product_id,
+                        product_name,
+                        product_quantity,
+                        product_price,
+                        product_description,
+                        location_id,
+                    )
+                ),
+                201,
             )
         else:
             return ErrorHandler().bad_request()
@@ -131,16 +149,26 @@ class ProductHandler(object):
 
             LocationDAO().update_location(location_id, latitude, longitude)
 
-            return self.build_product(
-                (
-                    product_id,
-                    product_name,
-                    product_quantity,
-                    product_price,
-                    product_description,
-                    location_id,
-                )
+            return (
+                self.build_product(
+                    (
+                        product_id,
+                        product_name,
+                        product_quantity,
+                        product_price,
+                        product_description,
+                        location_id,
+                    )
+                ),
+                200,
             )
 
         else:
             return ErrorHandler().bad_request()
+
+    def delete_product(self, product_id):
+        if not self.get_product_by_id(product_id):
+            return ErrorHandler().not_found()
+        else:
+            ProductDAO().delete_product(product_id)
+            return jsonify(Deletion="OK"), 200
