@@ -15,8 +15,8 @@ class ProductDAO(object):
         ]
 
     def get_all_detailed_products(self):
-        # USE A DICTIONARY CURSOR HERE
-        # Must join with categories
+        # TODO: USE A DICTIONARY CURSOR HERE
+        # TODO: Must join with categories
         return [
             {
                 "product_id": 1,
@@ -63,7 +63,7 @@ class ProductDAO(object):
         ]
 
     def get_product_by_id(self, product_id):
-        # Query by id
+        # TODO: Query by id
         return [(1, "water bottle", 100, 0.0, "bottle of water", 1)]
 
     def get_detailed_product_by_id(self, product_id):
@@ -83,9 +83,27 @@ class ProductDAO(object):
         ]
 
     def get_available_products_by_name(self, product_name):
-        # Query by name and quantity > 0, sort by name
+        # TODO: Query by name and quantity > 0, sort by name
         return [(3, "ibuprofen", 20, 4.0, "generic", 1)]
 
-    def insert_product(self, product_name, product_quantity, product_price, product_description, location_id):
+    def insert_product(
+        self,
+        product_name,
+        product_quantity,
+        product_price,
+        product_description,
+        location_id,
+    ):
         product_id = 3
         return product_id
+
+    def update_product(
+        self,
+        product_id,
+        product_name,
+        product_quantity,
+        product_price,
+        product_description,
+    ):
+        location_id = 3  # * Must return location id to update it
+        return product_id, location_id
