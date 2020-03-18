@@ -1,17 +1,15 @@
-from ds_app.dao.user_dao import UserDAO
-from ds_app.handlers.error_handler import ErrorHandler
+from api.dao.user_dao import UserDAO
+from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
 
-
 class UserHandler(object):
-
     def build_user_dict(self, row):
         user_dict = {}
-        user_dict['user_id'] = row[0]
-        user_dict['username'] = row[1]
-        user_dict['password'] = row[2]
-        user_dict['phone'] = row[3]
+        user_dict["user_id"] = row[0]
+        user_dict["username"] = row[1]
+        user_dict["password"] = row[2]
+        user_dict["phone"] = row[3]
         return user_dict
 
     def get_all_users(self):
@@ -24,15 +22,15 @@ class UserHandler(object):
     def get_user_by_id(self, user_id):
         result = UserDAO().get_user_by_id(user_id)
         if not result:
-            return ErrorHandler().not_found_error()
+            return ErrorHandler().not_found()
         else:
             return jsonify(user=[self.build_user_dict(result[0])]), 200
 
     def insert_user(self, form):
         if form and len(form) == 3:
-            username = form['username']
-            password = form['password']
-            phone_id = form['phone_id']
+            username = form["username"]
+            password = form["password"]
+            phone_id = form["phone_id"]
             if username and password and phone_id:
                 result = UserDAO()
                 user_id = result.insert(username, password, phone_id)
@@ -46,5 +44,3 @@ class UserHandler(object):
                 return jsonify(Error="Malformed post request")
         else:
             return jsonify(Error="Malformed post request")
-
-
