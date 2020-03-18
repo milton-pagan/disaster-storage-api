@@ -85,3 +85,7 @@ class ProductDAO(object):
     def get_available_products_by_name(self, product_name):
         # Query by name and quantity > 0, sort by name
         return [(3, "ibuprofen", 20, 4.0, "generic", 1)]
+
+    def insert_product(self, product_name, product_quantity, product_price, product_description, location_id):
+        product_id = 3
+        return product_id

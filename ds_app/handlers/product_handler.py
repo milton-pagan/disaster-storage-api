@@ -1,4 +1,5 @@
 from ds_app.dao.product_dao import ProductDAO
+from ds_app.dao.location_dao import LocationDAO
 from ds_app.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
@@ -60,17 +61,24 @@ class ProductHandler(object):
         return jsonify(parts=result_dict), 200
 
     def insert_product(self, payload):
-        dao = ProductDAO()
-
-        if len(payload) != 6:
+        try:
+            product_name = payload['product_name']
+            product_quantity = payload['product_quantity']
+            product_price = payload['product_price']
+            product_description = payload['product_description']
+            latitude = payload['latitude']
+            longitude = payload['longitude']
+        except KeyError:
             return ErrorHandler().bad_request()
 
+        if product_name and product_quantity and product_price and product_description and latitude and longitude:
+            location_id = LocationDAO().insert_location(latitude, longitude)
+            product_id = ProductDAO().insert_product(product_name, product_quantity, product_price, product_description, location_id)
+            return self.build_product((product_id, product_name, product_quantity, product_price, product_description, location_id))
         else:
-            
+            return ErrorHandler().bad_request()
     
     def update_product(self, product_id, payload):
-        dao = ProductDAO()
-
         if not self.get_product_by_id(product_id):
             return ErrorHandler().not_found()
 

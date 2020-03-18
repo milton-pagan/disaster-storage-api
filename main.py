@@ -80,7 +80,6 @@ def get_all_requested_products():
 
 @app.route("/disasterStorage/products", methods=["GET", "POST"])
 def get_all_products():
-
     if request.method == "GET":
         if not request.args:
             return ProductHandler().get_all_products()
@@ -88,7 +87,7 @@ def get_all_products():
             return ProductHandler().get_all_detailed_products()
 
     elif request.method == "POST":
-        pass
+        return ProductHandler().insert_product(request.json)
 
 
 @app.route("/disasterStorage/products/<int:product_id>", methods=["GET", "PUT", "DELETE"])
