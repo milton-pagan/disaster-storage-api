@@ -67,8 +67,8 @@ class ProductHandler(object):
 
         if category:
             result = ProductDAO().get_products_by_category(category)
-        else:
             return jsonify(products=result), 200
+        else:
             return ErrorHandler().bad_request()
 
     # Operations by product id
