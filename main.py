@@ -87,7 +87,16 @@ def get_all_products():
         if not request.args:
             return ProductHandler().get_all_products()
         elif "d" in request.args:
+            # Get detailed products
+
             return ProductHandler().get_all_detailed_products()
+        elif "category" in request.args:
+            # Get products by category
+
+            return ProductHandler().get_products_by_category(request.args)
+
+        else:
+            return ProductHandler().search_products(request.args)
 
     elif request.method == "POST":
         return ProductHandler().insert_product(request.json)
@@ -108,18 +117,6 @@ def get_product_by_id(product_id):
 
     else:
         return ProductHandler().delete_product(product_id)
-
-
-@app.route("/disasterStorage/products/available")
-def get_available_products():
-    if not request.args:
-        return ProductHandler().get_available_products()
-
-    else:
-        if 'd' in request.args:
-            return ProductHandler().get_detailed_available_products()
-        else:
-            return ProductHandler().search_available_product(request.args)
 
 
 if __name__ == "__main__":

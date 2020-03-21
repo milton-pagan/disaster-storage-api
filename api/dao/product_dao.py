@@ -1,14 +1,13 @@
 import psycopg2
 
+
 class ProductDAO(object):
     # Connection to backend is set up here
     def init(self):
         return
 
-
     # General product operations
-    
-    # Returns available products (in stock)
+
     def get_all_products(self):
         return [
             (1, "water bottle", 100, 0.0, "bottle of water", 1),
@@ -58,17 +57,7 @@ class ProductDAO(object):
             },
         ]
 
-    # Available product operations
-
-    def get_available_products(self):
-        return [
-            (1, "water bottle", 100, 0.0, "bottle of water", 1),
-            (3, "ibuprofen", 20, 4.0, "generic", 1),
-        ]
-
-    def get_detailed_available_products(self):
-        # TODO: USE A DICTIONARY CURSOR HERE
-        # TODO: Must join with categories
+    def get_products_by_category(self, category):
         return [
             {
                 "product_id": 1,
@@ -81,31 +70,7 @@ class ProductDAO(object):
                 "volume_ml": 500,
                 "location_latitude": 18.20985,
                 "location_longitude": -67.13918,
-            },
-            {
-                "product_id": 2,
-                "product_name": "bouillon sausages",
-                "product_quantity": 50,
-                "product_price": 0.0,
-                "product_description": "8 count",
-                "location_id": 2,
-                "exp_date": "2020-06-22",
-                "weight_g": 80.0,
-                "location_latitude": 18.20985,
-                "location_longitude": -67.13918,
-            },
-            {
-                "product_id": 3,
-                "product_name": "ibuprofen",
-                "product_quantity": 20,
-                "product_price": 4.0,
-                "product_description": "painkillers",
-                "location_id": 1,
-                "type": "pills",
-                "exp_date": "2020-06-22",
-                "location_latitude": 18.20985,
-                "location_longitude": -67.13918,
-            },
+            }
         ]
 
     # Operations by product id
@@ -130,8 +95,8 @@ class ProductDAO(object):
             }
         ]
 
-    def get_available_products_by_name(self, product_name):
-        # TODO: Query by name and quantity > 0, sort by name
+    def get_products_by_name(self, product_name):
+        # TODO: Query by name and sort by name
         return [(3, "ibuprofen", 20, 4.0, "generic", 1)]
 
     def insert_product(
