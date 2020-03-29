@@ -2,6 +2,7 @@ from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from api.handlers.product_handler import ProductHandler
 from api.handlers.customer_handler import CustomerHandler
+from api.handlers.supplier_handler import SupplierHandler
 from api.handlers.user_handler import UserHandler
 
 app = Flask(__name__)
@@ -51,14 +52,28 @@ def get_customer_by_id(customer_id):
 ### SUPPLIERS ###
 
 
-@app.route("/disasterStorage/users/suppliers")
+@app.route("/disasterStorage/users/suppliers", methods=["GET", "POST"])
 def get_all_suppliers():
-    return
+    if request.method == "GET":
+        if not request.args:
+            return SupplierHandler().get_all_suppliers()
+        else:
+            return SupplierHandler().search_suppliers(request.args)
+
+    elif request == "POST":
+        return SupplierHandler().insert_supplier(request.json)
 
 
-@app.route("/disasterStorage/users/<int:supplier_id>")
+@app.route("/disasterStorage/users/<int:supplier_id>", methods=["GET", "PUT", "DELETE"])
 def get_supplier_by_id(supplier_id):
-    return
+    if request.method == "GET":
+        return SupplierHandler().get_supplies_by_id(supplier_id)
+
+    elif request.method == "PUT":
+        return SupplierHandler().update_supplier(supplier_id, request.json)
+
+    else:
+        return SupplierHandler().delete_supplier(supplier_id)
 
 
 ### REQUESTS ###
