@@ -41,12 +41,26 @@ def get_user_by_id(user_id):
 
 @app.route("/disasterStorage/users/customers", methods=["GET", "POST"])
 def get_all_customers():
-    return
+    if request.method == "GET":
+        if not request.args:
+            return CustomerHandler().get_all_customers()
+        else:
+            return CustomerHandler().search_customer(request.args)
+
+    elif request == "POST":
+        return CustomerHandler().insert_customer(request.json)
 
 
-@app.route("/disasterStorage/users/<int:customer_id>", methods=["GET", "PUT", "DELETE"])
+@app.route("/disasterStorage/users/customers/<int:customer_id>", methods=["GET", "PUT", "DELETE"])
 def get_customer_by_id(customer_id):
-    return
+    if request.method == "GET":
+        return CustomerHandler().get_customer_by_id(customer_id)
+
+    elif request.method == "PUT":
+        return CustomerHandler().update_customer(customer_id, request.json)
+
+    else:
+        return CustomerHandler().delete_customer(customer_id)
 
 
 ### SUPPLIERS ###
@@ -64,10 +78,10 @@ def get_all_suppliers():
         return SupplierHandler().insert_supplier(request.json)
 
 
-@app.route("/disasterStorage/users/<int:supplier_id>", methods=["GET", "PUT", "DELETE"])
+@app.route("/disasterStorage/users/suppliers/<int:supplier_id>", methods=["GET", "PUT", "DELETE"])
 def get_supplier_by_id(supplier_id):
     if request.method == "GET":
-        return SupplierHandler().get_supplies_by_id(supplier_id)
+        return SupplierHandler().get_supplier_by_id(supplier_id)
 
     elif request.method == "PUT":
         return SupplierHandler().update_supplier(supplier_id, request.json)

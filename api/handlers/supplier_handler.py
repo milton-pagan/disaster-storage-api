@@ -28,7 +28,7 @@ class SupplierHandler(object):
         else:
             supplier_city = args.get("city")
             if supplier_city:
-                supplier_list = SupplierDAO().get_supplier_by_city(supplier_city)
+                supplier_list = SupplierDAO().get_suppliers_by_city(supplier_city)
                 result_list = []
                 for row in supplier_list:
                     result = self.build_supplier(row)
@@ -37,11 +37,11 @@ class SupplierHandler(object):
             else:
                 return ErrorHandler().bad_request()
 
-    def get_supplies_by_id(self, supplier_id):
+    def get_supplier_by_id(self, supplier_id):
         result = SupplierDAO().get_supplier_by_id(supplier_id)
         if not result:
             return ErrorHandler().not_found()
-        return jsonify(supplier=[self.build_product(result[0])]), 200
+        return jsonify(supplier=[self.build_supplier(result[0])]), 200
 
     # Supplier insertion, update and deletion
 
@@ -54,21 +54,23 @@ class SupplierHandler(object):
 
             if supplier_name and supplier_city and latitude and longitude:
                 location_id = LocationDAO().insert_location(latitude, longitude)
-                supplier_id = SupplierDAO().insert_supplier(supplier_name,supplier_city, location_id)
+                supplier_id = SupplierDAO().insert_supplier(supplier_name, supplier_city, location_id)
 
-                return jsonify(supplier=self.build_supplier(
-                    supplier_id,
-                    supplier_name,
-                    supplier_city,
-                    location_id
-                )), 201
+                return (self.build_supplier(
+                    (
+                        supplier_id,
+                        supplier_name,
+                        supplier_city,
+                        location_id
+                    )
+                ), 201)
             else:
                 return ErrorHandler().bad_request()
         else:
             return ErrorHandler().bad_request()
 
     def update_supplier(self, supplier_id, supplier):
-        if not self.get_supplies_by_id(supplier_id):
+        if not self.get_supplier_by_id(supplier_id):
             return ErrorHandler().not_found()
 
         if supplier and len(supplier) == 3:
@@ -85,12 +87,14 @@ class SupplierHandler(object):
                 )
                 LocationDAO().update_location(location_id, latitude, longitude)
 
-                return jsonify(supplier=self.build_supplier(
-                    supplier_id,
-                    supplier_name,
-                    supplier_city,
-                    location_id
-                )), 200
+                return (self.build_supplier(
+                    (
+                        supplier_id,
+                        supplier_name,
+                        supplier_city,
+                        location_id
+                    )
+                ), 200)
             else:
                 return ErrorHandler().bad_request()
         else:
