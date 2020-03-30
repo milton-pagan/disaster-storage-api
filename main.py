@@ -159,6 +159,14 @@ def get_reservations_by_product(product_id):
         else:
             return ReservationHandler().get_reservations_by_product(product_id)
 
+@app.route("/disasterStorage/reservations/customers/<int:customer_id>", methods=["GET"])
+def get_reservations_by_customer(customer_id):
+    if request.method == "GET":
+        if "d" in request.args:
+            return ReservationHandler().get_detailed_reservations_by_customer(customer_id)
+        else:
+            return ReservationHandler().get_reservations_by_customer(customer_id)
+
 
 if __name__ == "__main__":
     app.run()
