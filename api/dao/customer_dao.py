@@ -27,7 +27,8 @@ class CustomerDAO(object):
             customer_first_name,
             customer_last_name,
             customer_city,
-            location_id
+            location_id,
+            user_id
     ):
         customer_id = 9
         return customer_id

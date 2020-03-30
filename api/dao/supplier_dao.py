@@ -22,12 +22,16 @@ class SupplierDAO(object):
     def get_supplier_by_id(self, supplier_id):
         return [(2, "Pep Boys", "Mayaguez", 2)]
 
+    def get_products_by_supplier_id(self, supplier_id):
+        return [(1, "water bottle", 100, 0.0, "bottle of water", 1),
+            (2, "bouillon sausages", 50, 0.0, "8 count can", 2)]
 
     def insert_supplier(
             self,
             supplier_name,
             supplier_city,
-            location_id
+            location_id,
+            user_id
     ):
         supplier_id = 10
         return supplier_id

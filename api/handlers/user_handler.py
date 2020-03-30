@@ -41,6 +41,6 @@ class UserHandler(object):
                 result_dict["phone_id"] = phone_id
                 return jsonify(User=result_dict), 201
             else:
-                return jsonify(Error="Malformed post request")
+                return ErrorHandler().bad_request()
         else:
-            return jsonify(Error="Malformed post request")
+            return ErrorHandler().bad_request()

@@ -1,4 +1,5 @@
 from api.dao.supplier_dao import SupplierDAO
+from api.dao.user_dao import UserDAO
 from api.dao.location_dao import LocationDAO
 from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
@@ -10,7 +11,16 @@ class SupplierHandler(object):
         object_dict["supplier_id"] = record[0]
         object_dict["supplier_name"] = record[1]
         object_dict["supplier_city"] = record[2]
-        object_dict["location_id"] = record [3]
+        object_dict["location_id"] = record[3]
+        return object_dict
+
+    def build_supplier_user(self, record):
+        object_dict = {}
+        object_dict["supplier_id"] = record[0]
+        object_dict["supplier_name"] = record[1]
+        object_dict["supplier_city"] = record[2]
+        object_dict["location_id"] = record[3]
+        object_dict["user_id"] = record[4]
         return object_dict
 
     #General Supplier Operations
@@ -22,17 +32,19 @@ class SupplierHandler(object):
             result_dict.append(self.build_supplier(record))
         return jsonify(supplier=result_dict), 200
 
-    def search_suppliers(self, args):
-        if len(args) > 1:
-            return ErrorHandler().bad_request()
-        else:
-            supplier_city = args.get("city")
+    def search_suppliers(self, supplier):
+        try:
+            supplier_city = supplier["customer_city"]
+
+        except KeyError:
+            ErrorHandler().bad_request()
+
             if supplier_city:
                 supplier_list = SupplierDAO().get_suppliers_by_city(supplier_city)
                 result_list = []
                 for row in supplier_list:
                     result = self.build_supplier(row)
-                    result_list.append(row)
+                    result_list.append(result)
                 return jsonify(suppliers=result_list)
             else:
                 return ErrorHandler().bad_request()
@@ -43,25 +55,54 @@ class SupplierHandler(object):
             return ErrorHandler().not_found()
         return jsonify(supplier=[self.build_supplier(result[0])]), 200
 
+    def get_products_by_supplier_id(self, supplier_id):
+        if not SupplierDAO().get_products_by_supplier_id(supplier_id):
+            return ErrorHandler().not_found()
+
+        parts_list = SupplierDAO().get_products_by_supplier_id(supplier_id)
+        result_list = []
+        for row in parts_list:
+            result = self.build_part_dict(row)
+            result_list.append(result)
+        return jsonify(ProductsSupplier=result_list)
+
     # Supplier insertion, update and deletion
 
     def insert_supplier(self, supplier):
-        if supplier and len(supplier) == 4:
-            supplier_name = supplier["supplier_name"]
-            supplier_city = supplier["supplier_city"]
+        try:
+            supplier_name = supplier["customer_first_name"]
+            supplier_city = supplier["customer_city"]
             latitude = supplier["latitude"]
             longitude = supplier["longitude"]
+            supplier_username = supplier["supplier_username"]
+            supplier_password = supplier["supplier_password"]
+            supplier_phone = supplier["supplier_phone"]
 
-            if supplier_name and supplier_city and latitude and longitude:
+        except KeyError:
+            ErrorHandler().bad_request()
+
+            if (supplier_name and supplier_city and latitude and longitude and
+                supplier_username and supplier_password and supplier_phone):
+
                 location_id = LocationDAO().insert_location(latitude, longitude)
-                supplier_id = SupplierDAO().insert_supplier(supplier_name, supplier_city, location_id)
+                supplier_id = SupplierDAO().insert_supplier(
+                    supplier_name,
+                    supplier_city,
+                    location_id
+                )
+                user_id = UserDAO().insert_user(
+                    supplier_username,
+                    supplier_password,
+                    supplier_phone
+                )
 
-                return (self.build_supplier(
+                return (self.build_supplier_user(
                     (
                         supplier_id,
                         supplier_name,
                         supplier_city,
-                        location_id
+                        location_id,
+                        user_id
                     )
                 ), 201)
             else:
@@ -73,11 +114,13 @@ class SupplierHandler(object):
         if not self.get_supplier_by_id(supplier_id):
             return ErrorHandler().not_found()
 
-        if supplier and len(supplier) == 3:
-            supplier_name = supplier["supplier_name"]
-            supplier_city = supplier["supplier_city"]
+        try:
+            supplier_name = supplier["customer_first_name"]
+            supplier_city = supplier["customer_city"]
             latitude = supplier["latitude"]
             longitude = supplier["longitude"]
+        except KeyError:
+            ErrorHandler().bad_request()
 
             if supplier_name and supplier_city and latitude and longitude:
                 supplier_id, location_id = SupplierDAO().update_supplier(
