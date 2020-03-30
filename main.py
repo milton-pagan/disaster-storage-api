@@ -159,6 +159,14 @@ def get_orders_by_product(product_id):
         else:
             return OrderHandler().get_orders_by_product(product_id)
 
+@app.route("/disasterStorage/orders/customers/<int:customer_id>", methods=["GET"])
+def get_orders_by_customer(customer_id):
+    if request.method == "GET":
+        if "d" in request.args:
+            return OrderHandler().get_detailed_orders_by_customer(customer_id)
+        else:
+            return OrderHandler().get_orders_by_customer(customer_id)
+
 
 if __name__ == "__main__":
     app.run()
