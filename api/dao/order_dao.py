@@ -47,6 +47,23 @@ class OrderDAO(object):
                 "order_total": 50.75,
             }]
 
+    def get_orders_by_product(self, product_id):
+        return [(3, 50.75), (7, 4.11)]
+
+    def get_detailed_orders_by_product(self, product_id):
+        return [{
+                "order_id": 3,
+                "product_id": 22,
+                "order_quantity": 45,
+                "order_total": 50.75,
+                },
+                {
+                "order_id": 7,
+                "product_id": 22,
+                "order_quantity": 4,
+                "order_total": 4.11,
+                }]
+
     def insert_order(self, product_id, order_quantity, order_total):
         order_id = 4
         return order_id

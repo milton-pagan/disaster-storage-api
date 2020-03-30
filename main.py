@@ -129,12 +129,12 @@ def get_available_products():
 def get_all_orders():
     if request.method == "GET":
         if not request.args:
-            return OrderHandler.get_all_orders()
-        elif "d" in request.args:
-            return OrderHandler.get_all_detailed_orders()
+            return OrderHandler().get_all_orders()
+        if "d" in request.args:
+            return OrderHandler().get_all_detailed_orders()
 
-    elif request.method == "POST":
-        return OrderHandler.insert_order(request.json);
+    if request.method == "POST":
+        return OrderHandler().insert_order(request.json);
 
 
 @app.route("/disasterStorage/orders/<int:order_id>", methods=["GET", "PUT", "DELETE"])
@@ -145,11 +145,19 @@ def get_order_by_id(order_id):
         else:
             return OrderHandler().get_order_by_id(order_id)
 
-    elif request.method == "PUT":
+    if request.method == "PUT":
         return OrderHandler().update_order(order_id, request.json)
 
-    else:
+    if request.method == "DELETE":
         return OrderHandler().delete_order(order_id)
+
+@app.route("/disasterStorage/orders/products/<int:product_id>", methods=["GET"])
+def get_orders_by_product(product_id):
+    if request.method == "GET":
+        if "d" in request.args:
+            return OrderHandler().get_detailed_orders_by_product(product_id)
+        else:
+            return OrderHandler().get_orders_by_product(product_id)
 
 
 if __name__ == "__main__":

@@ -11,23 +11,22 @@ order_total
 class OrderHandler(object):
 
     def build_order(self, record):
-        ord_dict = {}
-        ord_dict["order_id"] = record[0]
-        ord_dict["product_id"] = record[1]
-        ord_dict["order_quantity"] = record[1]
-        ord_dict["order_total"] = record[2]
+        ord_dict = {"order_id": record[0],
+                    "product_id": record[1],
+                    "order_quantity": record[1],
+                    "order_total": record[2]}
         return ord_dict
 
     def get_all_orders(self):
-        result = OrderDAO().get_all_orders()
+        results = OrderDAO().get_all_orders()
         res_dict = []
-        for order in result:
+        for order in results:
             res_dict.append(self.build_order(order))
         return jsonify(orders=res_dict)
 
     def get_all_detailed_orders(self):
-        result = OrderDAO().get_all_detailed_orders()
-        return jsonify(detailed_orders=result)
+        results = OrderDAO().get_all_detailed_orders()
+        return jsonify(detailed_orders=results)
 
     def get_order_by_id(self, order_id):
         result = OrderDAO().get_order_by_id(order_id)
@@ -40,6 +39,23 @@ class OrderHandler(object):
         if not result:
             return ErrorHandler().not_found()
         return jsonify(order=result), 200
+
+    def get_orders_by_product(self, product_id):
+        results = OrderDAO().get_orders_by_product(product_id)
+        if not results:
+            return ErrorHandler().not_found()
+        return jsonify(orders=results), 200
+
+    def get_detailed_orders_by_product(self, product_id):
+        results = OrderDAO().get_detailed_orders_by_product(product_id)
+        if not results:
+            return ErrorHandler().not_found()
+
+        res_dict = []
+        for order in results:
+            res_dict.append(self.build_order(order))
+        return jsonify(orders=res_dict)
+
 
     def insert_order(self, payload):
         try:
