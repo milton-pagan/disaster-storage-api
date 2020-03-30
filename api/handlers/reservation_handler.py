@@ -1,0 +1,94 @@
+from api.dao.reservation_dao import ReservationDAO
+from api.handlers.error_handler import ErrorHandler
+from flask import jsonify
+
+class ReservationHandler(object):
+
+    def build_reservation(self, record):
+        res_dict = {
+            "reservation_id": record[0],
+            "product_id": record[1],
+            "reservation_quantity": record[2],
+            "reservation_total": record[3]
+        }
+        return res_dict
+
+    def get_all_reservations(self):
+        result = ReservationDAO().get_all_reservations()
+        res_dict = []
+        for reservation in result:
+            res_dict.append(self.build_reservation(reservation))
+        return jsonify(reservations=res_dict)
+
+    def get_all_detailed_reservations(self):
+        result = ReservationDAO().get_all_detailed_reservations()
+        return jsonify(detailed_reservations=result)
+
+    def get_reservation_by_id(self, reservation_id):
+        result = ReservationDAO().get_reservation_by_id(reservation_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(reservation=result), 200
+
+    def get_detailed_reservation_by_id(self, reservation_id):
+        result = ReservationDAO().get_detailed_reservation_by_id(reservation_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(reservation=result), 200
+
+    def get_reservations_by_product(self, product_id):
+        results = ReservationDAO().get_reservations_by_product(product_id)
+        if not results:
+            return ErrorHandler().not_found()
+        res_dict = []
+        for reservation in results:
+            res_dict.append(self.build_reservation(reservation))
+        return jsonify(reservations=results), 200
+
+    def get_detailed_reservations_by_product(self, product_id):
+        results = ReservationDAO().get_detailed_reservations_by_product(product_id)
+        if not results:
+            return ErrorHandler().not_found()
+
+        res_dict = []
+        for reservation in results:
+            res_dict.append(self.build_reservation(reservation))
+        return jsonify(reservations=res_dict), 200
+
+    def insert_reservation(self, payload):
+        try:
+            product_id = payload["product_id"]
+            reservation_quantity = payload["reservation_quantity"]
+        except KeyError:
+            return ErrorHandler().bad_request()
+
+        if product_id and reservation_quantity:
+            reservation_id = ReservationDAO().insert_reservation(product_id, reservation_quantity)
+
+            return (self.build_reservation((reservation_id, product_id, reservation_quantity))), 201
+
+        else:
+            return ErrorHandler().bad_request()
+
+    def update_reservation(self, reservation_id, payload):
+        if not self.get_reservation_by_id(reservation_id):
+            return ErrorHandler().not_found()
+
+        try:
+            product_id = payload["product_id"]
+            reservation_quantity = payload["reservation_quantity"]
+        except KeyError:
+            return ErrorHandler().bad_request()
+
+        if product_id and reservation_quantity:
+            reservation_id = ReservationDAO().update_reservation(reservation_id, product_id, reservation_quantity)
+
+            return (self.build_reservation((reservation_id, product_id, reservation_quantity))), 200
+
+    def delete_reservation(self, reservation_id):
+        if not self.get_reservation_by_id(reservation_id):
+            return ErrorHandler().not_found()
+
+        else:
+            ReservationDAO().delete_reservation(reservation_id)
+            return jsonify(Deletion="Deleted"), 200
