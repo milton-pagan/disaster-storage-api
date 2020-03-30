@@ -3,6 +3,7 @@ from api.config.config import get_config
 from api.handlers.error_handler import ErrorHandler
 from api.dao.category_info import categories
 
+
 class CategoryDAO(object):
     def __init__(self):
         self.conn = psycopg2.connect(**get_config())
@@ -45,6 +46,64 @@ class CategoryDAO(object):
             query, tuple(temp),
         )
 
+        id = cursor.fetchone()[0]
+        self.conn.commit()
+
+        return id
+
+    def update_product_category_info(self, category_name, product_id, payload):
+        try:
+            category = self.categories[category_name]
+        except KeyError:
+            return ErrorHandler().bad_request("Invalid category")
+
+        cursor = self.conn.cursor()
+        query = (
+            "update "
+            + category_name
+            + " set "
+            + "".join(
+                map(
+                    lambda attribute: attribute + " = %s, ", category["attributes"][:-1]
+                )
+            )
+            + category["attributes"][-1]
+            + "=%s where product_id = %s returning "
+            + category_name
+            + "_id;"
+        )
+
+        try:
+            temp = [payload[attribute] for attribute in category["attributes"]]
+            temp.append(product_id)
+        except KeyError:
+            return ErrorHandler().bad_request("Invalid category attributes")
+
+        cursor.execute(
+            query, tuple(temp),
+        )
+
+        id = cursor.fetchone()[0]
+        self.conn.commit()
+
+        return id
+
+    def delete_category_info(self, category_name, product_id):
+        try:
+            self.categories[category_name]
+        except KeyError:
+            return ErrorHandler().bad_request("Invalid category")
+
+        cursor = self.conn.cursor()
+
+        query = (
+            "delete from "
+            + category_name
+            + " where product_id= %s returning "
+            + category_name
+            + "_id;"
+        )
+        cursor.execute(query, (product_id,))
         id = cursor.fetchone()[0]
         self.conn.commit()
 

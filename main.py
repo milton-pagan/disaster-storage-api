@@ -86,14 +86,6 @@ def get_all_products():
     if request.method == "GET":
         if not request.args:
             return ProductHandler().get_all_products()
-        elif "d" in request.args:
-            # Get detailed products
-
-            return ProductHandler().get_all_detailed_products()
-        elif "category" in request.args:
-            # Get products by category
-
-            return ProductHandler().get_products_by_category(request.args)
 
         else:
             return ProductHandler().search_products(request.args)
@@ -102,21 +94,41 @@ def get_all_products():
         return ProductHandler().insert_product(request.json)
 
 
+@app.route("/disasterStorage/products/<str:category>")
+def get_all_products_by_category(category):
+    return ProductHandler().get_all_products_by_category(category)
+
+
 @app.route(
     "/disasterStorage/products/<int:product_id>", methods=["GET", "PUT", "DELETE"]
 )
 def get_product_by_id(product_id):
     if request.method == "GET":
-        if "d" in request.args:
-            return ProductHandler().get_detailed_product_by_id(product_id)
-        else:
-            return ProductHandler().get_product_by_id(product_id)
+        return ProductHandler().get_product_by_id(product_id)
 
     elif request.method == "PUT":
         return ProductHandler().update_product(product_id, request.json)
 
     else:
         return ProductHandler().delete_product(product_id)
+
+
+@app.route("/disasterStorage/products/<int:product_id>/details", methods=["GET", "PUT"])
+def get_product_details(product_id):
+    if request.method == "GET":
+        return ProductHandler().get_detailed_product_by_id(product_id)
+    else:
+        return ProductHandler().update_product_category_info(product_id, request.json)
+
+
+@app.route(
+    "/disasterStorage/products/<int:product_id>/location", methods=["GET", "PUT"]
+)
+def get_product_location(product_id):
+    if request.method == "GET":
+        return ProductHandler().get_product_location(product_id)
+    else:
+        return ProductHandler().update_product_location(product_id, request.json)
 
 
 if __name__ == "__main__":

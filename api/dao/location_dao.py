@@ -18,7 +18,7 @@ class LocationDAO(object):
     def update_location(self, location_id, latitude, longitude):
         cursor = self.conn.cursor()
         query = "update location set latitude=%s, longitude=%s where location_id=%s"
-        cursor.execute(query, (latitude, longitude))
+        cursor.execute(query, (latitude, longitude, location_id))
         self.conn.commit()
 
         return location_id
