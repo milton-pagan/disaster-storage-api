@@ -5,8 +5,9 @@ from api.dao.credit_card_dao import CreditCardDAO
 from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
-class CustomerHandler(object):
 
+class CustomerHandler(object):
+ 
     def build_customer(self, record):
         object_dict = {}
         object_dict["customer_id"] = record[0]
