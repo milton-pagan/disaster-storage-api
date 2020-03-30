@@ -35,13 +35,21 @@ class OrderDAO(object):
         # if not found in DB return NULL
         return [(1, 19.99)]
 
+    def get_detailed_order_by_id(self, order_id):
+        # if not found in DB return NULL
+        return [{
+                "order_id": 3,
+                "order_quantity": 45,
+                "order_total": 50.75,
+            }]
+
     def insert_order(self, order_quantity, order_total):
         order_id = 4
         return order_id
 
-    def update_product(self, order_id, order_quantity, order_total):
+    def update_order(self, order_id, order_quantity, order_total):
         order_id = 3
         return order_id
 
-    def delete_product(self, order_id):
+    def delete_order(self, order_id):
         return order_id

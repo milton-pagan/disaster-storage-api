@@ -34,6 +34,12 @@ class OrderHandler(object):
             return ErrorHandler().not_found()
         return jsonify(order=result), 200
 
+    def get_detailed_order_by_id(self, order_id):
+        result = OrderDAO().get_detailed_order_by_id(order_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(order=result), 200
+
     def insert_order(self, payload):
         try:
             order_quantity = payload["order_quantity"]
@@ -44,10 +50,7 @@ class OrderHandler(object):
         if order_quantity and order_total:
             order_id = OrderDAO().insert_order(order_total,order_quantity)
 
-            return (self.build_order(
-                (order_id, order_quantity, order_total)
-                                    )
-            ), 201
+            return (self.build_order((order_id, order_quantity, order_total))), 201
 
         else:
             return ErrorHandler().bad_request()
@@ -63,12 +66,9 @@ class OrderHandler(object):
             return ErrorHandler().bad_request()
 
         if order_quantity and order_total:
-
             order_id = OrderDAO().update_order(order_id, order_quantity, order_total)
 
-            return (
-                self.build_order((order_id,order_quantity,order_total))
-                   ), 200
+            return (self.build_order((order_id,order_quantity,order_total))), 200
 
     def delete_order(self, order_id):
         if not self.get_order_by_id(order_id):
