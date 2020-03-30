@@ -5,15 +5,6 @@ class ReservationDAO(object):
         return
 
     def get_all_reservations(self):
-        # reservation_id, product_id
-        return [
-            (1, 30),
-            (2, 31),
-            (3, 32)
-        ]
-
-    def get_all_detailed_reservations(self):
-        # reservation_id, product_id, quantity
         return [
             {
                 "reservation_id": 1,
@@ -38,9 +29,6 @@ class ReservationDAO(object):
         ]
 
     def get_reservation_by_id(self, reservation_id):
-        return [(1, 30)]
-
-    def get_detailed_reservation_by_id(self, reservation_id):
         return [{
                 "reservation_id": 2,
                 "customer_id": 7,
@@ -49,9 +37,6 @@ class ReservationDAO(object):
                 }]
 
     def get_reservations_by_product(self, product_id):
-        return [(3, 32), (6, 12)]
-
-    def get_detailed_reservations_by_product(self, product_id):
         return [{
                 "reservation_id": 3,
                 "customer_id": 9,
@@ -66,9 +51,6 @@ class ReservationDAO(object):
                 }]
 
     def get_reservations_by_customer(self, customer_id):
-        return [(3, 32), (6, 12)]
-
-    def get_detailed_reservations_by_customer(self, customer_id):
         return [{
                 "reservation_id": 3,
                 "customer_id": 9,

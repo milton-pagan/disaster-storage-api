@@ -128,10 +128,7 @@ def get_available_products():
 @app.route("/disasterStorage/reservations", methods=["GET", "POST"])
 def get_all_reservations():
     if request.method == "GET":
-        if not request.args:
-            return ReservationHandler().get_all_reservations()
-        elif "d" in request.args:
-            return ReservationHandler().get_all_detailed_reservations()
+        return ReservationHandler().get_all_reservations()
 
     if request.method == "POST":
         return ReservationHandler().insert_reservation(request.json);
@@ -140,32 +137,23 @@ def get_all_reservations():
 @app.route("/disasterStorage/reservations/<int:reservation_id>", methods=["GET", "PUT", "DELETE"])
 def get_reservation_by_id(reservation_id):
     if request.method == "GET":
-        if "d" in request.args:
-            return ReservationHandler().get_detailed_reservation_by_id(reservation_id)
-        else:
-            return ReservationHandler().get_reservation_by_id(reservation_id)
+        return ReservationHandler().get_reservation_by_id(reservation_id)
 
     if request.method == "PUT":
         return ReservationHandler().update_reservation(reservation_id, request.json)
 
-    else:
+    if request.method == "DELETE":
         return ReservationHandler().delete_reservation(reservation_id)
 
-@app.route("/disasterStorage/reservations/products/<int:product_id>", methods=["GET"])
+@app.route("/disasterStorage/reservations/products/<int:product_id>")
 def get_reservations_by_product(product_id):
     if request.method == "GET":
-        if "d" in request.args:
-            return ReservationHandler().get_detailed_reservations_by_product(product_id)
-        else:
-            return ReservationHandler().get_reservations_by_product(product_id)
+        return ReservationHandler().get_reservations_by_product(product_id)
 
-@app.route("/disasterStorage/reservations/customers/<int:customer_id>", methods=["GET"])
+@app.route("/disasterStorage/reservations/customers/<int:customer_id>")
 def get_reservations_by_customer(customer_id):
     if request.method == "GET":
-        if "d" in request.args:
-            return ReservationHandler().get_detailed_reservations_by_customer(customer_id)
-        else:
-            return ReservationHandler().get_reservations_by_customer(customer_id)
+        return ReservationHandler().get_reservations_by_customer(customer_id)
 
 
 if __name__ == "__main__":
