@@ -128,44 +128,28 @@ def get_available_products():
 @app.route("/disasterStorage/orders", methods=["GET", "POST"])
 def get_all_orders():
     if request.method == "GET":
-        if not request.args:
-            return OrderHandler().get_all_orders()
-        if "d" in request.args:
-            return OrderHandler().get_all_detailed_orders()
-
+        return OrderHandler().get_all_orders()
     if request.method == "POST":
-        return OrderHandler().insert_order(request.json);
-
+        return OrderHandler().insert_order(request.json)
 
 @app.route("/disasterStorage/orders/<int:order_id>", methods=["GET", "PUT", "DELETE"])
 def get_order_by_id(order_id):
     if request.method == "GET":
-        if "d" in request.args:
-            return OrderHandler().get_detailed_order_by_id(order_id)
-        else:
-            return OrderHandler().get_order_by_id(order_id)
-
+        return OrderHandler().get_order_by_id(order_id)
     if request.method == "PUT":
         return OrderHandler().update_order(order_id, request.json)
-
     if request.method == "DELETE":
         return OrderHandler().delete_order(order_id)
 
-@app.route("/disasterStorage/orders/products/<int:product_id>", methods=["GET"])
+@app.route("/disasterStorage/orders/products/<int:product_id>")
 def get_orders_by_product(product_id):
     if request.method == "GET":
-        if "d" in request.args:
-            return OrderHandler().get_detailed_orders_by_product(product_id)
-        else:
-            return OrderHandler().get_orders_by_product(product_id)
+        return OrderHandler().get_orders_by_product(product_id)
 
-@app.route("/disasterStorage/orders/customers/<int:customer_id>", methods=["GET"])
+@app.route("/disasterStorage/orders/customers/<int:customer_id>")
 def get_orders_by_customer(customer_id):
     if request.method == "GET":
-        if "d" in request.args:
-            return OrderHandler().get_detailed_orders_by_customer(customer_id)
-        else:
-            return OrderHandler().get_orders_by_customer(customer_id)
+        return OrderHandler().get_orders_by_customer(customer_id)
 
 
 if __name__ == "__main__":

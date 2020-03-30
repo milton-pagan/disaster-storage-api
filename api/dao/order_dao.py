@@ -4,15 +4,6 @@ class OrderDAO(object):
         return
 
     def get_all_orders(self):
-        # id, price
-        return [
-            (1, 19.99),
-            (2, 5.99),
-            (3, 50.75)
-        ]
-
-    def get_all_detailed_orders(self):
-        # id, quantity, price
         return [
             {
                 "order_id": 1,
@@ -38,11 +29,6 @@ class OrderDAO(object):
         ]
 
     def get_order_by_id(self, order_id):
-        # if not found in DB return NULL
-        return [(1, 19.99)]
-
-    def get_detailed_order_by_id(self, order_id):
-        # if not found in DB return NULL
         return [{
                 "order_id": 3,
                 "customer_id:": 5,
@@ -52,9 +38,6 @@ class OrderDAO(object):
             }]
 
     def get_orders_by_product(self, product_id):
-        return [(3, 50.75), (7, 4.11)]
-
-    def get_detailed_orders_by_product(self, product_id):
         return [{
                 "order_id": 3,
                 "customer_id:": 5,
@@ -71,9 +54,6 @@ class OrderDAO(object):
                 }]
 
     def get_orders_by_customer(self, customer_id):
-        return [(3, 50.75), (11, 4.11)]
-
-    def get_detailed_orders_by_customer(self, customer_id):
         return [{
                 "order_id": 3,
                 "customer_id:": 5,

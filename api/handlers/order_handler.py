@@ -19,18 +19,8 @@ class OrderHandler(object):
             res_dict.append(self.build_order(order))
         return jsonify(orders=res_dict)
 
-    def get_all_detailed_orders(self):
-        results = OrderDAO().get_all_detailed_orders()
-        return jsonify(detailed_orders=results)
-
     def get_order_by_id(self, order_id):
         result = OrderDAO().get_order_by_id(order_id)
-        if not result:
-            return ErrorHandler().not_found()
-        return jsonify(order=result), 200
-
-    def get_detailed_order_by_id(self, order_id):
-        result = OrderDAO().get_detailed_order_by_id(order_id)
         if not result:
             return ErrorHandler().not_found()
         return jsonify(order=result), 200
@@ -41,33 +31,11 @@ class OrderHandler(object):
             return ErrorHandler().not_found()
         return jsonify(orders=results), 200
 
-    def get_detailed_orders_by_product(self, product_id):
-        results = OrderDAO().get_detailed_orders_by_product(product_id)
-        if not results:
-            return ErrorHandler().not_found()
-
-        res_dict = []
-        for order in results:
-            res_dict.append(self.build_order(order))
-        return jsonify(orders=res_dict)
-
-
     def get_orders_by_customer(self, customer_id):
         results = OrderDAO().get_orders_by_customer(customer_id)
         if not results:
             return ErrorHandler().not_found()
         return jsonify(orders=results), 200
-
-    def get_detailed_orders_by_customer(self, customer_id):
-        results = OrderDAO().get_detailed_orders_by_customer(customer_id)
-        if not results:
-            return ErrorHandler().not_found()
-
-        res_dict = []
-        for order in results:
-            res_dict.append(self.build_order(order))
-        return jsonify(orders=res_dict)
-
 
     def insert_order(self, payload):
         try:
@@ -78,13 +46,8 @@ class OrderHandler(object):
         except KeyError:
             return ErrorHandler().bad_request()
 
-        if customer_id and product_id and order_quantity and order_total:
-            order_id = OrderDAO().insert_order(customer_id, product_id, order_quantity, order_total)
-
-            return (self.build_order((order_id, customer_id, product_id, order_quantity, order_total))), 201
-
-        else:
-            return ErrorHandler().bad_request()
+        order_id = OrderDAO().insert_order(customer_id, product_id, order_quantity, order_total)
+        return self.build_order((order_id, customer_id, product_id, order_quantity, order_total)), 201
 
     def update_order(self, order_id, payload):
         if not self.get_order_by_id(order_id):
@@ -98,15 +61,12 @@ class OrderHandler(object):
         except KeyError:
             return ErrorHandler().bad_request()
 
-        if customer_id and product_id and order_quantity and order_total:
-            order_id = OrderDAO().update_order(customer_id, product_id, order_quantity, order_total)
-
-            return (self.build_order((order_id, product_id, order_quantity,order_total))), 200
+        order_id = OrderDAO().update_order(customer_id, product_id, order_quantity, order_total)
+        return self.build_order((order_id, product_id, order_quantity,order_total)), 200
 
     def delete_order(self, order_id):
         if not self.get_order_by_id(order_id):
             return ErrorHandler().not_found()
-
         else:
             OrderDAO().delete_order(order_id)
             return jsonify(Deletion="Deleted"), 200
