@@ -94,7 +94,7 @@ def get_all_products():
         return ProductHandler().insert_product(request.json)
 
 
-@app.route("/disasterStorage/products/<str:category>")
+@app.route("/disasterStorage/products/<string:category>")
 def get_all_products_by_category(category):
     return ProductHandler().get_all_products_by_category(category)
 

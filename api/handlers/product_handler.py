@@ -86,10 +86,12 @@ class ProductHandler(object):
 
     def get_detailed_product_by_id(self, product_id):
         """ Returns a JSON object containing the product with the indicated ID. Includes all of the product's details. """
-
-        result = ProductDAO().get_detailed_product_by_id(product_id)
-        if not result:
+        product_dao = ProductDAO()
+        if not product_dao.get_product_by_id(product_id):
             return ErrorHandler().not_found()
+
+        result = product_dao.get_detailed_product_by_id(product_id)
+
         return jsonify(product=result), 200
 
     # Product insertion, update, and deletion
@@ -158,7 +160,9 @@ class ProductHandler(object):
             tuple -- Updated product and/or response
         """
 
-        if not self.get_product_by_id(product_id):
+        product_dao = ProductDAO()
+
+        if not product_dao.get_product_by_id(product_id):
             return ErrorHandler().not_found()
         try:
             product_name = payload["product_name"]
@@ -169,7 +173,7 @@ class ProductHandler(object):
         except KeyError:
             return ErrorHandler().bad_request()
 
-        location_id = ProductDAO().update_product(
+        location_id = product_dao.update_product(
             product_id,
             product_name,
             product_quantity,
@@ -194,13 +198,17 @@ class ProductHandler(object):
         )
 
     def update_product_location(self, product_id, payload):
+
+        product_dao = ProductDAO()
+        if not product_dao.get_product_by_id(product_id):
+            return ErrorHandler().not_found()
+
         try:
             latitude = payload["latitude"]
             longitude = payload["longitude"]
         except KeyError:
             return ErrorHandler().bad_request()
 
-        product_dao = ProductDAO()
         location_id = product_dao.get_product_location_id(product_id)
 
         LocationDAO().update_location(location_id, latitude, longitude)
@@ -210,13 +218,17 @@ class ProductHandler(object):
         return jsonify(Product=result), 200
 
     def update_product_category_info(self, product_id, payload):
+
+        product_dao = ProductDAO()
+        if not product_dao.get_product_by_id(product_id):
+            return ErrorHandler().not_found()
+
         try:
             category_attributes = payload["category_attributes"]
         except KeyError:
             return ErrorHandler().bad_request()
 
         category_dao = CategoryDAO()
-        product_dao = ProductDAO()
         category = product_dao.get_product_category(product_id)
 
         # Check that correct attributes for category were passed
@@ -240,10 +252,10 @@ class ProductHandler(object):
     def delete_product(self, product_id):
         """ Deletes the product with the specified id. """
 
-        if not self.get_product_by_id(product_id):
+        product_dao = ProductDAO()
+        if not product_dao.get_product_by_id(product_id):
             return ErrorHandler().not_found()
         else:
-            product_dao = ProductDAO()
 
             product_category = product_dao.get_product_category(product_id)
             CategoryDAO().delete_category_info(product_category, product_id)

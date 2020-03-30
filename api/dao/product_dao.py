@@ -12,7 +12,7 @@ class ProductDAO(object):
 
     def get_all_products(self):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "select * from product;"
+        query = "select * from product order by product_id;"
         cursor.execute(query)
 
         return cursor.fetchall()
@@ -20,7 +20,7 @@ class ProductDAO(object):
     def get_products_by_category(self, category):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-        query = "select * from product natural inner join " + category + ";"
+        query = "select * from product natural inner join " + category + " order by product_id;"
         cursor.execute(query)
 
         return cursor.fetchall()
@@ -77,7 +77,8 @@ class ProductDAO(object):
     def get_products_by_keyword(self, keyword):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-        query = "select * from product where product_name ilike %s;"
+        query = "select * from product where product_name ilike %s order by product_name;"
+        keyword = "%" + keyword + "%"
         cursor.execute(query, (keyword,))
 
         return cursor.fetchall()
