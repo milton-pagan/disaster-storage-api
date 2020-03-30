@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 from api.handlers.product_handler import ProductHandler
 from api.handlers.customer_handler import CustomerHandler
 from api.handlers.user_handler import UserHandler
+from api.handlers.order_handler import OrderHandler
 
 app = Flask(__name__)
 CORS(app)
@@ -120,6 +121,35 @@ def get_available_products():
             return ProductHandler().get_detailed_available_products()
         else:
             return ProductHandler().search_available_product(request.args)
+
+
+### ORDERS ###
+
+@app.route("/disasterStorage/orders", methods=["GET", "POST"])
+def get_all_orders():
+    if request.method == "GET":
+        if not request.args:
+            return OrderHandler.get_all_orders()
+        elif "d" in request.args:
+            return OrderHandler.get_all_detailed_orders()
+
+    elif request.method == "POST":
+        return OrderHandler.insert_order(request.json);
+
+
+@app.route("/disasterStorage/orders/<int:order_id>", methods=["GET", "PUT", "DELETE"])
+def get_order_by_id(order_id):
+    if request.method == "GET":
+        if "d" in request.args:
+            return OrderHandler().get_detailed_order_by_id(order_id)
+        else:
+            return OrderHandler().get_order_by_id(order_id)
+
+    elif request.method == "PUT":
+        return OrderHandler().update_order(order_id, request.json)
+
+    else:
+        return OrderHandler().delete_order(order_id)
 
 
 if __name__ == "__main__":
