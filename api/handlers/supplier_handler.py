@@ -23,6 +23,16 @@ class SupplierHandler(object):
         object_dict["user_id"] = record[4]
         return object_dict
 
+    def build_product(self, record):
+        object_dict = {}
+        object_dict["product_id"] = record[0]
+        object_dict["product_name"] = record[1]
+        object_dict["product_quantity"] = record[2]
+        object_dict["product_price"] = record[3]
+        object_dict["product_description"] = record[4]
+        object_dict["location_id"] = record[5]
+        return object_dict
+
     #General Supplier Operations
 
     def get_all_suppliers(self):
@@ -35,7 +45,6 @@ class SupplierHandler(object):
     def search_suppliers(self, supplier):
         try:
             supplier_city = supplier["customer_city"]
-
         except KeyError:
             ErrorHandler().bad_request()
 
@@ -62,7 +71,7 @@ class SupplierHandler(object):
         parts_list = SupplierDAO().get_products_by_supplier_id(supplier_id)
         result_list = []
         for row in parts_list:
-            result = self.build_part_dict(row)
+            result = self.build_product(row)
             result_list.append(result)
         return jsonify(ProductsSupplier=result_list)
 

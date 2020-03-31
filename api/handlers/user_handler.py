@@ -38,7 +38,7 @@ class UserHandler(object):
                 result_dict["user_id"] = user_id
                 result_dict["username"] = username
                 result_dict["password"] = password
-                result_dict["phone_id"] = phone_number
+                result_dict["phone_number"] = phone_number
                 return jsonify(User=result_dict), 201
             else:
                 return ErrorHandler().bad_request()
@@ -72,3 +72,10 @@ class UserHandler(object):
                 return ErrorHandler().bad_request()
         else:
             return ErrorHandler().bad_request()
+
+    def delete_user(self, user_id):
+        if not self.get_user_by_id(user_id):
+            return ErrorHandler().not_found()
+        else:
+            UserDAO().delete_user(user_id)
+            return jsonify(Deletion="OK"), 200

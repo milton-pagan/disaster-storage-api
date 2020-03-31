@@ -20,3 +20,6 @@ class UserDAO(object):
 
     def update_user(self, user_id, username, password, phone):
         return user_id
+
+    def delete_user(self, user_id):
+        return user_id

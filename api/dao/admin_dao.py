@@ -15,3 +15,9 @@ class AdminDAO(object):
     def insert_admin(self, admin_name):
         admin_id = 3
         return admin_id
+
+    def update_admin(self, admin_id, admin_nam):
+        return admin_id
+
+    def delete_admin(self, admin_id):
+        return admin_id

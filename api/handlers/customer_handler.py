@@ -22,7 +22,6 @@ class CustomerHandler(object):
         object_dict["customer_first_name"] = record[1]
         object_dict["supplier_last_name"] = record[2]
         object_dict["location_id"] = record[3]
-        object_dict["cc_id"] = record[4]
         object_dict["user_id"] = record[5]
 
         return object_dict
@@ -89,17 +88,17 @@ class CustomerHandler(object):
                     customer_password,
                     customer_phone
                 )
-                cc_id = CreditCardDAO().insert_credit_card(
-                    customer_cc_type,
-                    customer_cc_number
-                )
                 customer_id = CustomerDAO().insert_customer(
                     customer_first_name,
                     customer_last_name,
                     customer_city,
                     location_id,
-                    cc_id,
                     user_id
+                )
+                cc_id = CreditCardDAO().insert_credit_card(
+                    customer_cc_type,
+                    customer_cc_number,
+                    customer_id
                 )
                 return (self.build_customer_user(
                     (
@@ -108,7 +107,6 @@ class CustomerHandler(object):
                         customer_last_name,
                         customer_city,
                         location_id,
-                        cc_id,
                         user_id
                     )
                 ), 201)
@@ -127,6 +125,10 @@ class CustomerHandler(object):
             customer_city = customer["customer_city"]
             latitude = customer["latitude"]
             longitude = customer["longitude"]
+            cc_id = customer["cc_id"]
+            customer_cc_type = customer["cc_type"]
+            customer_cc_number = customer["cc_number"]
+
         except KeyError:
             ErrorHandler().bad_request()
 
@@ -138,6 +140,7 @@ class CustomerHandler(object):
                     customer_city,
                 )
                 LocationDAO().update_location(location_id, latitude, longitude)
+                CreditCardDAO().update_credit_card(cc_id, customer_cc_number, customer_cc_type, customer_id)
 
                 return (self.build_customer(
                     (

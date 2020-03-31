@@ -27,13 +27,16 @@ def get_all_users():
         return UserHandler().insert_user(request.json)
 
 
-@app.route("/disasterStorage/users/<int:user_id>", methods=["GET", "PUT"])
+@app.route("/disasterStorage/users/<int:user_id>", methods=["GET", "PUT", "DELETE"])
 def get_user_by_id(user_id):
     if request.method == "GET":
         return UserHandler().get_user_by_id(user_id)
 
     elif request.method == "PUT":
         return UserHandler().updated_user(user_id, request.json)
+
+    else:
+        return UserHandler().delete_user(user_id)
 
 
 ### ADMIN ###
@@ -47,10 +50,16 @@ def get_all_admins():
         return AdminHandler().insert_admin(request.json)
 
 
-@app.route("/disasterStorage/users/admin", methods=["GET"])
+@app.route("/disasterStorage/users/admin", methods=["GET", "PUT", "DELETE"])
 def get_admin_by_id(admin_id):
     if request.method == "GET":
         return AdminHandler().get_admin_by_id(admin_id)
+
+    elif request.method == "PUT":
+        return AdminHandler().update_admin(admin_id, request.json)
+
+    else:
+        return AdminHandler().delete_admin(admin_id)
 
 
 ### CUSTOMERS ###
