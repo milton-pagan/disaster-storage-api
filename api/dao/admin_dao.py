@@ -6,11 +6,12 @@ class AdminDAO(object):
         return
 
     def get_all_admins(self):
-        return []
+        return [(1, "NombreAdmin1"),
+                (2, "NombreAdmin2")]
 
     def get_admin_by_id(self, admin_id):
-        return []
+        return [(2, "NombreAdmin2")]
 
     def insert_admin(self, admin_name):
-        admin_id = 1
+        admin_id = 3
         return admin_id

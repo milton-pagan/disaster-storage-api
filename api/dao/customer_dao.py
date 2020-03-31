@@ -28,6 +28,7 @@ class CustomerDAO(object):
             customer_last_name,
             customer_city,
             location_id,
+            cc_id,
             user_id
     ):
         customer_id = 9

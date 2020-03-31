@@ -73,8 +73,6 @@ class CustomerHandler(object):
             customer_phone = customer["customer_phone"]
             customer_cc_type = customer["cc_type"]
             customer_cc_number = customer["cc_number"]
-            customer_cc_exp = customer["cc_exp"]
-            customer_cc_sec_code = customer["cc_sec_code"]
 
         except KeyError:
             ErrorHandler().bad_request()
@@ -83,8 +81,7 @@ class CustomerHandler(object):
                 customer_first_name and customer_last_name and
                 customer_city and latitude and longitude and
                 customer_username and customer_password and
-                customer_phone and customer_cc_type and customer_cc_number and
-                customer_cc_exp and customer_cc_sec_code
+                customer_phone and customer_cc_type and customer_cc_number
             ):
                 location_id = LocationDAO().insert_location(latitude, longitude)
                 user_id = UserDAO().insert_user(
@@ -92,18 +89,17 @@ class CustomerHandler(object):
                     customer_password,
                     customer_phone
                 )
+                cc_id = CreditCardDAO().insert_credit_card(
+                    customer_cc_type,
+                    customer_cc_number
+                )
                 customer_id = CustomerDAO().insert_customer(
                     customer_first_name,
                     customer_last_name,
                     customer_city,
                     location_id,
+                    cc_id,
                     user_id
-                )
-                cc_id = CreditCardDAO().insert_credit_card(
-                    customer_cc_type,
-                    customer_cc_number,
-                    customer_cc_exp,
-                    customer_cc_sec_code
                 )
                 return (self.build_customer_user(
                     (

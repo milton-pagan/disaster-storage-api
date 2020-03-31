@@ -1,6 +1,7 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from api.handlers.product_handler import ProductHandler
+from api.handlers.admin_handler import AdminHandler
 from api.handlers.customer_handler import CustomerHandler
 from api.handlers.supplier_handler import SupplierHandler
 from api.handlers.user_handler import UserHandler
@@ -17,11 +18,13 @@ def greet():
 ### USERS ###
 
 
-@app.route("/disasterStorage/users", methods=["GET"])
+@app.route("/disasterStorage/users", methods=["GET", "POST"])
 def get_all_users():
     if request.method == "GET":
         return UserHandler().get_all_users()
-    return
+
+    elif request == "POST":
+        return UserHandler().insert_user(request.json)
 
 
 @app.route("/disasterStorage/users/<int:user_id>", methods=["GET", "PUT"])
@@ -30,10 +33,24 @@ def get_user_by_id(user_id):
         return UserHandler().get_user_by_id(user_id)
 
     elif request.method == "PUT":
-        return
+        return UserHandler().updated_user(user_id, request.json)
 
-    else:
-        return
+
+### ADMIN ###
+
+
+@app.route("/disasterStorage/users/admin", methods=["GET", "POST"])
+def get_all_admins():
+    if request.method == "GET":
+        return AdminHandler().get_all_admins()
+    elif request.method == "POST":
+        return AdminHandler().insert_admin(request.json)
+
+
+@app.route("/disasterStorage/users/admin", methods=["GET"])
+def get_admin_by_id(admin_id):
+    if request.method == "GET":
+        return AdminHandler().get_admin_by_id(admin_id)
 
 
 ### CUSTOMERS ###
