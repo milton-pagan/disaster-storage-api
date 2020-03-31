@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 from api.handlers.product_handler import ProductHandler
 from api.handlers.customer_handler import CustomerHandler
 from api.handlers.user_handler import UserHandler
+from api.handlers.order_handler import OrderHandler
 
 app = Flask(__name__)
 CORS(app)
@@ -129,6 +130,35 @@ def get_product_location(product_id):
         return ProductHandler().get_product_location(product_id)
     else:
         return ProductHandler().update_product_location(product_id, request.json)
+
+
+### ORDERS ###
+
+@app.route("/disasterStorage/orders", methods=["GET", "POST"])
+def get_all_orders():
+    if request.method == "GET":
+        return OrderHandler().get_all_orders()
+    if request.method == "POST":
+        return OrderHandler().insert_order(request.json)
+
+@app.route("/disasterStorage/orders/<int:order_id>", methods=["GET", "PUT", "DELETE"])
+def get_order_by_id(order_id):
+    if request.method == "GET":
+        return OrderHandler().get_order_by_id(order_id)
+    if request.method == "PUT":
+        return OrderHandler().update_order(order_id, request.json)
+    if request.method == "DELETE":
+        return OrderHandler().delete_order(order_id)
+
+@app.route("/disasterStorage/orders/products/<int:product_id>")
+def get_orders_by_product(product_id):
+    if request.method == "GET":
+        return OrderHandler().get_orders_by_product_id(product_id)
+
+@app.route("/disasterStorage/orders/customers/<int:customer_id>")
+def get_orders_by_customer(customer_id):
+    if request.method == "GET":
+        return OrderHandler().get_orders_by_customer_id(customer_id)
 
 
 if __name__ == "__main__":
