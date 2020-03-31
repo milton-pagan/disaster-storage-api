@@ -8,8 +8,7 @@ class RequestHandler(object):
         res_dict = {"request_id": record[0],
                     "customer_id": record[1],
                     "product_id": record[2],
-                    "request_quantity": record[3],
-                    "request_total": record[4]}
+                    "request_quantity": record[3]}
         return res_dict
 
     def get_all_requests(self):
@@ -29,20 +28,12 @@ class RequestHandler(object):
         results = RequestDAO().get_requests_by_product_id(product_id)
         if not results:
             return ErrorHandler().not_found()
-        res_dict = []
-        for request in results:
-            res_dict.append(self.build_request(request))
-
         return jsonify(requests=results), 200
 
     def get_requests_by_customer_id(self, customer_id):
         results = RequestDAO().get_requests_by_customer_id(customer_id)
         if not results:
             return ErrorHandler().not_found()
-        res_dict = []
-        for request in results:
-            res_dict.append(self.build_request(request))
-
         return jsonify(requests=results), 200
 
     def search_requests(self, args):

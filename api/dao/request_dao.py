@@ -7,28 +7,9 @@ class RequestDAO(object):
         return
 
     def get_all_requests(self):
-        return [
-            {
-                "request_id": 1,
-                "customer_id": 5,
-                "product_id": 30,
-                "request_quantity": 5,
-
-            },
-            {
-                "request_id": 2,
-                "customer_id": 7,
-                "product_id": 31,
-                "request_quantity": 10,
-            },
-            {
-                "request_id": 3,
-                "customer_id": 9,
-                "product_id": 32,
-                "request_quantity": 25,
-
-            },
-        ]
+        return [(1, 5, 30, 5),
+                (2, 7, 31, 10),
+                (3, 9, 32, 25)]
 
     def get_request_by_id(self, request_id):
         return [{
