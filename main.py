@@ -3,7 +3,9 @@ from flask_cors import CORS, cross_origin
 from api.handlers.product_handler import ProductHandler
 from api.handlers.customer_handler import CustomerHandler
 from api.handlers.user_handler import UserHandler
+from api.handlers.reservation_handler import ReservationHandler
 from api.handlers.order_handler import OrderHandler
+
 
 app = Flask(__name__)
 CORS(app)
@@ -159,6 +161,39 @@ def get_orders_by_product(product_id):
 def get_orders_by_customer(customer_id):
     if request.method == "GET":
         return OrderHandler().get_orders_by_customer_id(customer_id)
+
+
+### RESERVATIONS ###
+
+@app.route("/disasterStorage/reservations", methods=["GET", "POST"])
+def get_all_reservations():
+    if request.method == "GET":
+        return ReservationHandler().get_all_reservations()
+
+    if request.method == "POST":
+        return ReservationHandler().insert_reservation(request.json);
+
+
+@app.route("/disasterStorage/reservations/<int:reservation_id>", methods=["GET", "PUT", "DELETE"])
+def get_reservation_by_id(reservation_id):
+    if request.method == "GET":
+        return ReservationHandler().get_reservation_by_id(reservation_id)
+
+    if request.method == "PUT":
+        return ReservationHandler().update_reservation(reservation_id, request.json)
+
+    if request.method == "DELETE":
+        return ReservationHandler().delete_reservation(reservation_id)
+
+@app.route("/disasterStorage/reservations/products/<int:product_id>")
+def get_reservations_by_product(product_id):
+    if request.method == "GET":
+        return ReservationHandler().get_reservations_by_product_id(product_id)
+
+@app.route("/disasterStorage/reservations/customers/<int:customer_id>")
+def get_reservations_by_customer(customer_id):
+    if request.method == "GET":
+        return ReservationHandler().get_reservations_by_customer_id(customer_id)
 
 
 if __name__ == "__main__":
