@@ -1,7 +1,9 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
 from api.handlers.product_handler import ProductHandler
+from api.handlers.admin_handler import AdminHandler
 from api.handlers.customer_handler import CustomerHandler
+from api.handlers.supplier_handler import SupplierHandler
 from api.handlers.user_handler import UserHandler
 from api.handlers.request_handler import RequestHandler
 from api.handlers.reservation_handler import ReservationHandler
@@ -20,23 +22,48 @@ def greet():
 ### USERS ###
 
 
-@app.route("/disasterStorage/users", methods=["GET"])
+@app.route("/disasterStorage/users", methods=["GET", "POST"])
 def get_all_users():
     if request.method == "GET":
         return UserHandler().get_all_users()
-    return
+
+    elif request == "POST":
+        return UserHandler().insert_user(request.json)
 
 
-@app.route("/disasterStorage/users/<int:user_id>", methods=["GET", "PUT"])
+@app.route("/disasterStorage/users/<int:user_id>", methods=["GET", "PUT", "DELETE"])
 def get_user_by_id(user_id):
     if request.method == "GET":
         return UserHandler().get_user_by_id(user_id)
 
     elif request.method == "PUT":
-        return
+        return UserHandler().updated_user(user_id, request.json)
 
     else:
-        return
+        return UserHandler().delete_user(user_id)
+
+
+### ADMIN ###
+
+
+@app.route("/disasterStorage/users/admin", methods=["GET", "POST"])
+def get_all_admins():
+    if request.method == "GET":
+        return AdminHandler().get_all_admins()
+    elif request.method == "POST":
+        return AdminHandler().insert_admin(request.json)
+
+
+@app.route("/disasterStorage/users/admin", methods=["GET", "PUT", "DELETE"])
+def get_admin_by_id(admin_id):
+    if request.method == "GET":
+        return AdminHandler().get_admin_by_id(admin_id)
+
+    elif request.method == "PUT":
+        return AdminHandler().update_admin(admin_id, request.json)
+
+    else:
+        return AdminHandler().delete_admin(admin_id)
 
 
 ### CUSTOMERS ###
@@ -44,25 +71,53 @@ def get_user_by_id(user_id):
 
 @app.route("/disasterStorage/users/customers", methods=["GET", "POST"])
 def get_all_customers():
-    return
+    if request.method == "GET":
+        if not request.args:
+            return CustomerHandler().get_all_customers()
+        else:
+            return CustomerHandler().search_customer(request.args)
+
+    elif request == "POST":
+        return CustomerHandler().insert_customer(request.json)
 
 
-@app.route("/disasterStorage/users/<int:customer_id>", methods=["GET", "PUT", "DELETE"])
+@app.route("/disasterStorage/users/customers/<int:customer_id>", methods=["GET", "PUT", "DELETE"])
 def get_customer_by_id(customer_id):
-    return
+    if request.method == "GET":
+        return CustomerHandler().get_customer_by_id(customer_id)
+
+    elif request.method == "PUT":
+        return CustomerHandler().update_customer(customer_id, request.json)
+
+    else:
+        return CustomerHandler().delete_customer(customer_id)
 
 
 ### SUPPLIERS ###
 
 
-@app.route("/disasterStorage/users/suppliers")
+@app.route("/disasterStorage/users/suppliers", methods=["GET", "POST"])
 def get_all_suppliers():
-    return
+    if request.method == "GET":
+        if not request.args:
+            return SupplierHandler().get_all_suppliers()
+        else:
+            return SupplierHandler().search_suppliers(request.args)
+
+    elif request == "POST":
+        return SupplierHandler().insert_supplier(request.json)
 
 
-@app.route("/disasterStorage/users/<int:supplier_id>")
+@app.route("/disasterStorage/users/suppliers/<int:supplier_id>", methods=["GET", "PUT", "DELETE"])
 def get_supplier_by_id(supplier_id):
-    return
+    if request.method == "GET":
+        return SupplierHandler().get_supplier_by_id(supplier_id)
+
+    elif request.method == "PUT":
+        return SupplierHandler().update_supplier(supplier_id, request.json)
+
+    else:
+        return SupplierHandler().delete_supplier(supplier_id)
 
 @app.route("/disasterStorage/products", methods=["GET", "POST"])
 def get_all_products():
