@@ -1,138 +1,87 @@
 import psycopg2
+import psycopg2.extras
+from api.config.config import get_config
+
 
 class ProductDAO(object):
     # Connection to backend is set up here
-    def init(self):
-        return
-
+    def __init__(self):
+        self.conn = psycopg2.connect(**get_config())
 
     # General product operations
-    
-    # Returns available products (in stock)
+
     def get_all_products(self):
-        return [
-            (1, "water bottle", 100, 0.0, "bottle of water", 1),
-            (2, "bouillon sausages", 50, 0.0, "8 count can", 2),
-            (3, "ibuprofen", 20, 4.0, "generic", 1),
-        ]
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        query = "select * from product order by product_id;"
+        cursor.execute(query)
 
-    def get_all_detailed_products(self):
-        # TODO: USE A DICTIONARY CURSOR HERE
-        # TODO: Must join with categories
-        return [
-            {
-                "product_id": 1,
-                "product_name": "water bottle",
-                "product_quantity": 100,
-                "product_price": 0.0,
-                "product_description": "bottle of water",
-                "location_id": 1,
-                "exp_date": "2020-06-22",
-                "volume_ml": 500,
-                "location_latitude": 18.20985,
-                "location_longitude": -67.13918,
-            },
-            {
-                "product_id": 2,
-                "product_name": "bouillon sausages",
-                "product_quantity": 50,
-                "product_price": 0.0,
-                "product_description": "8 count",
-                "location_id": 2,
-                "exp_date": "2020-06-22",
-                "weight_g": 80.0,
-                "location_latitude": 18.20985,
-                "location_longitude": -67.13918,
-            },
-            {
-                "product_id": 3,
-                "product_name": "ibuprofen",
-                "product_quantity": 20,
-                "product_price": 4.0,
-                "product_description": "painkillers",
-                "location_id": 1,
-                "type": "pills",
-                "exp_date": "2020-06-22",
-                "location_latitude": 18.20985,
-                "location_longitude": -67.13918,
-            },
-        ]
+        return cursor.fetchall()
 
-    # Available product operations
+    def get_products_by_category(self, category):
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    def get_available_products(self):
-        return [
-            (1, "water bottle", 100, 0.0, "bottle of water", 1),
-            (3, "ibuprofen", 20, 4.0, "generic", 1),
-        ]
+        query = "select * from product natural inner join " + category + " order by product_id;"
+        cursor.execute(query)
 
-    def get_detailed_available_products(self):
-        # TODO: USE A DICTIONARY CURSOR HERE
-        # TODO: Must join with categories
-        return [
-            {
-                "product_id": 1,
-                "product_name": "water bottle",
-                "product_quantity": 100,
-                "product_price": 0.0,
-                "product_description": "bottle of water",
-                "location_id": 1,
-                "exp_date": "2020-06-22",
-                "volume_ml": 500,
-                "location_latitude": 18.20985,
-                "location_longitude": -67.13918,
-            },
-            {
-                "product_id": 2,
-                "product_name": "bouillon sausages",
-                "product_quantity": 50,
-                "product_price": 0.0,
-                "product_description": "8 count",
-                "location_id": 2,
-                "exp_date": "2020-06-22",
-                "weight_g": 80.0,
-                "location_latitude": 18.20985,
-                "location_longitude": -67.13918,
-            },
-            {
-                "product_id": 3,
-                "product_name": "ibuprofen",
-                "product_quantity": 20,
-                "product_price": 4.0,
-                "product_description": "painkillers",
-                "location_id": 1,
-                "type": "pills",
-                "exp_date": "2020-06-22",
-                "location_latitude": 18.20985,
-                "location_longitude": -67.13918,
-            },
-        ]
+        return cursor.fetchall()
 
     # Operations by product id
 
     def get_product_by_id(self, product_id):
-        # TODO: Query by id
-        return [(1, "water bottle", 100, 0.0, "bottle of water", 1)]
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        query = "select * from product where product_id= %s;"
+        cursor.execute(query, (product_id,))
+
+        return cursor.fetchone()
 
     def get_detailed_product_by_id(self, product_id):
-        return [
-            {
-                "product_id": 1,
-                "product_name": "water bottle",
-                "product_quantity": 100,
-                "product_price": 0.0,
-                "product_description": "bottle of water",
-                "location_id": 1,
-                "exp_date": "2020-06-22",
-                "volume_ml": 500,
-                "location_latitude": 18.20985,
-                "location_longitude": -67.13918,
-            }
-        ]
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
-    def get_available_products_by_name(self, product_name):
-        # TODO: Query by name and quantity > 0, sort by name
-        return [(3, "ibuprofen", 20, 4.0, "generic", 1)]
+        query = "select product_category from product where product_id= %s;"
+        cursor.execute(query, (product_id,))
+        category = cursor.fetchone()["product_category"]
+
+        query = (
+            "select * from product natural inner join "
+            + category
+            + " where product_id= %s;"
+        )
+        cursor.execute(query, (product_id,))
+
+        return cursor.fetchall()
+
+    def get_product_location(self, product_id):
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        query = "select latitude, longitude from location natural inner join product where product_id= %s;"
+        cursor.execute(query, (product_id,))
+
+        return cursor.fetchall()
+
+    def get_product_location_id(self, product_id):
+        cursor = self.conn.cursor()
+
+        query = "select location_id from product where product_id= %s;"
+        cursor.execute(query, (product_id,))
+
+        return cursor.fetchone()[0]
+
+    def get_product_category(self, product_id):
+        cursor = self.conn.cursor()
+
+        query = "select product_category from product where product_id= %s;"
+        cursor.execute(query, (product_id,))
+
+        return cursor.fetchone()[0]
+
+    def get_products_by_keyword(self, keyword):
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+
+        query = "select * from product where product_name ilike %s order by product_name;"
+        keyword = "%" + keyword + "%"
+        cursor.execute(query, (keyword,))
+
+        return cursor.fetchall()
 
     def insert_product(
         self,
@@ -140,9 +89,27 @@ class ProductDAO(object):
         product_quantity,
         product_price,
         product_description,
+        product_category,
         location_id,
     ):
-        product_id = 3
+        cursor = self.conn.cursor()
+        query = (
+            "insert into product(product_name, product_quantity, product_price, product_description, product_category, location_id)"
+            + "values (%s, %s, %s, %s, %s, %s) returning product_id;"
+        )
+        cursor.execute(
+            query,
+            (
+                product_name,
+                product_quantity,
+                product_price,
+                product_description,
+                product_category,
+                location_id,
+            ),
+        )
+        product_id = cursor.fetchone()[0]
+        self.conn.commit()
         return product_id
 
     def update_product(
@@ -151,11 +118,36 @@ class ProductDAO(object):
         product_name,
         product_quantity,
         product_price,
+        product_category,
         product_description,
     ):
-        location_id = 3  # * Must return location id to update it
-        return product_id, location_id
+        cursor = self.conn.cursor()
+        query = (
+            "update product set product_name = %s, product_quantity = %s, product_price = %s,"
+            + "product_category = %s, product_description = %s where product_id = %s returning location_id;"
+        )
+        cursor.execute(
+            query,
+            (
+                product_name,
+                product_quantity,
+                product_price,
+                product_category,
+                product_description,
+                product_id,
+            ),
+        )
+
+        location_id = cursor.fetchone()[0]
+        self.conn.commit()
+
+        return location_id
 
     def delete_product(self, product_id):
-        # TODO: Delete by product_id
-        return product_id
+        cursor = self.conn.cursor()
+        query = "delete from product where product_id = %s returning location_id;"
+        cursor.execute(query, (product_id,))
+        location_id = cursor.fetchone()[0]
+        self.conn.commit()
+
+        return location_id
