@@ -4,8 +4,8 @@ from api.dao.location_dao import LocationDAO
 from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
-class SupplierHandler(object):
 
+class SupplierHandler(object):
     def build_supplier(self, record):
         object_dict = {}
         object_dict["supplier_id"] = record[0]
@@ -33,7 +33,7 @@ class SupplierHandler(object):
         object_dict["location_id"] = record[5]
         return object_dict
 
-    #General Supplier Operations
+    # General Supplier Operations
 
     def get_all_suppliers(self):
         result = SupplierDAO().get_all_suppliers()
@@ -90,30 +90,36 @@ class SupplierHandler(object):
         except KeyError:
             ErrorHandler().bad_request()
 
-            if (supplier_name and supplier_city and latitude and longitude and
-                supplier_username and supplier_password and supplier_phone):
+            if (
+                supplier_name
+                and supplier_city
+                and latitude
+                and longitude
+                and supplier_username
+                and supplier_password
+                and supplier_phone
+            ):
 
                 location_id = LocationDAO().insert_location(latitude, longitude)
                 supplier_id = SupplierDAO().insert_supplier(
-                    supplier_name,
-                    supplier_city,
-                    location_id
+                    supplier_name, supplier_city, location_id
                 )
                 user_id = UserDAO().insert_user(
-                    supplier_username,
-                    supplier_password,
-                    supplier_phone
+                    supplier_username, supplier_password, supplier_phone
                 )
 
-                return (self.build_supplier_user(
-                    (
-                        supplier_id,
-                        supplier_name,
-                        supplier_city,
-                        location_id,
-                        user_id
-                    )
-                ), 201)
+                return (
+                    self.build_supplier_user(
+                        (
+                            supplier_id,
+                            supplier_name,
+                            supplier_city,
+                            location_id,
+                            user_id,
+                        )
+                    ),
+                    201,
+                )
             else:
                 return ErrorHandler().bad_request()
         else:
@@ -133,20 +139,16 @@ class SupplierHandler(object):
 
             if supplier_name and supplier_city and latitude and longitude:
                 supplier_id, location_id = SupplierDAO().update_supplier(
-                    supplier_id,
-                    supplier_name,
-                    supplier_city,
+                    supplier_id, supplier_name, supplier_city,
                 )
                 LocationDAO().update_location(location_id, latitude, longitude)
 
-                return (self.build_supplier(
-                    (
-                        supplier_id,
-                        supplier_name,
-                        supplier_city,
-                        location_id
-                    )
-                ), 200)
+                return (
+                    self.build_supplier(
+                        (supplier_id, supplier_name, supplier_city, location_id)
+                    ),
+                    200,
+                )
             else:
                 return ErrorHandler().bad_request()
         else:

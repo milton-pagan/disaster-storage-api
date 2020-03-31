@@ -1,7 +1,7 @@
 import psycopg2
 
-class CreditCardDAO(object):
 
+class CreditCardDAO(object):
     def __init__(self):
         return
 

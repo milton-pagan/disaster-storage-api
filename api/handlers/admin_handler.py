@@ -53,12 +53,7 @@ class AdminHandler(object):
             if admin_name:
                 AdminDAO().update_admin(admin_id, admin_name)
 
-                return (self.build_admin_dict(
-                    (
-                        admin_id,
-                        admin_name
-                    )
-                ), 200)
+                return (self.build_admin_dict((admin_id, admin_name)), 200)
             else:
                 return ErrorHandler().bad_request()
         else:

@@ -7,7 +7,6 @@ from flask import jsonify
 
 
 class CustomerHandler(object):
- 
     def build_customer(self, record):
         object_dict = {}
         object_dict["customer_id"] = record[0]
@@ -26,7 +25,7 @@ class CustomerHandler(object):
 
         return object_dict
 
-    #General Supplier Operations
+    # General Supplier Operations
 
     def get_all_customers(self):
         result = CustomerDAO().get_all_customer()
@@ -77,39 +76,44 @@ class CustomerHandler(object):
             ErrorHandler().bad_request()
 
             if (
-                customer_first_name and customer_last_name and
-                customer_city and latitude and longitude and
-                customer_username and customer_password and
-                customer_phone and customer_cc_type and customer_cc_number
+                customer_first_name
+                and customer_last_name
+                and customer_city
+                and latitude
+                and longitude
+                and customer_username
+                and customer_password
+                and customer_phone
+                and customer_cc_type
+                and customer_cc_number
             ):
                 location_id = LocationDAO().insert_location(latitude, longitude)
                 user_id = UserDAO().insert_user(
-                    customer_username,
-                    customer_password,
-                    customer_phone
+                    customer_username, customer_password, customer_phone
                 )
                 customer_id = CustomerDAO().insert_customer(
                     customer_first_name,
                     customer_last_name,
                     customer_city,
                     location_id,
-                    user_id
+                    user_id,
                 )
                 cc_id = CreditCardDAO().insert_credit_card(
-                    customer_cc_type,
-                    customer_cc_number,
-                    customer_id
+                    customer_cc_type, customer_cc_number, customer_id
                 )
-                return (self.build_customer_user(
-                    (
-                        customer_id,
-                        customer_first_name,
-                        customer_last_name,
-                        customer_city,
-                        location_id,
-                        user_id
-                    )
-                ), 201)
+                return (
+                    self.build_customer_user(
+                        (
+                            customer_id,
+                            customer_first_name,
+                            customer_last_name,
+                            customer_city,
+                            location_id,
+                            user_id,
+                        )
+                    ),
+                    201,
+                )
             else:
                 return ErrorHandler().bad_request()
         else:
@@ -132,25 +136,33 @@ class CustomerHandler(object):
         except KeyError:
             ErrorHandler().bad_request()
 
-            if customer_first_name and customer_last_name and customer_city and latitude and longitude:
+            if (
+                customer_first_name
+                and customer_last_name
+                and customer_city
+                and latitude
+                and longitude
+            ):
                 customer_id, location_id = CustomerDAO().update_customer(
-                    customer_id,
-                    customer_first_name,
-                    customer_last_name,
-                    customer_city,
+                    customer_id, customer_first_name, customer_last_name, customer_city,
                 )
                 LocationDAO().update_location(location_id, latitude, longitude)
-                CreditCardDAO().update_credit_card(cc_id, customer_cc_number, customer_cc_type, customer_id)
+                CreditCardDAO().update_credit_card(
+                    cc_id, customer_cc_number, customer_cc_type, customer_id
+                )
 
-                return (self.build_customer(
-                    (
-                        customer_id,
-                        customer_first_name,
-                        customer_last_name,
-                        customer_city,
-                        location_id
-                    )
-                ), 200)
+                return (
+                    self.build_customer(
+                        (
+                            customer_id,
+                            customer_first_name,
+                            customer_last_name,
+                            customer_city,
+                            location_id,
+                        )
+                    ),
+                    200,
+                )
             else:
                 return ErrorHandler().bad_request()
         else:

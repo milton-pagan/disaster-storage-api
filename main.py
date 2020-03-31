@@ -81,7 +81,10 @@ def get_all_customers():
         return CustomerHandler().insert_customer(request.json)
 
 
-@app.route("/disasterStorage/users/customers/<int:customer_id>", methods=["GET", "PUT", "DELETE"])
+@app.route(
+    "/disasterStorage/users/customers/<int:customer_id>",
+    methods=["GET", "PUT", "DELETE"],
+)
 def get_customer_by_id(customer_id):
     if request.method == "GET":
         return CustomerHandler().get_customer_by_id(customer_id)
@@ -108,7 +111,10 @@ def get_all_suppliers():
         return SupplierHandler().insert_supplier(request.json)
 
 
-@app.route("/disasterStorage/users/suppliers/<int:supplier_id>", methods=["GET", "PUT", "DELETE"])
+@app.route(
+    "/disasterStorage/users/suppliers/<int:supplier_id>",
+    methods=["GET", "PUT", "DELETE"],
+)
 def get_supplier_by_id(supplier_id):
     if request.method == "GET":
         return SupplierHandler().get_supplier_by_id(supplier_id)
@@ -118,6 +124,7 @@ def get_supplier_by_id(supplier_id):
 
     else:
         return SupplierHandler().delete_supplier(supplier_id)
+
 
 @app.route("/disasterStorage/products", methods=["GET", "POST"])
 def get_all_products():
@@ -171,12 +178,14 @@ def get_product_location(product_id):
 
 ### ORDERS ###
 
+
 @app.route("/disasterStorage/orders", methods=["GET", "POST"])
 def get_all_orders():
     if request.method == "GET":
         return OrderHandler().get_all_orders()
     if request.method == "POST":
         return OrderHandler().insert_order(request.json)
+
 
 @app.route("/disasterStorage/orders/<int:order_id>", methods=["GET", "PUT", "DELETE"])
 def get_order_by_id(order_id):
@@ -187,10 +196,12 @@ def get_order_by_id(order_id):
     if request.method == "DELETE":
         return OrderHandler().delete_order(order_id)
 
+
 @app.route("/disasterStorage/orders/products/<int:product_id>")
 def get_orders_by_product(product_id):
     if request.method == "GET":
         return OrderHandler().get_orders_by_product_id(product_id)
+
 
 @app.route("/disasterStorage/orders/customers/<int:customer_id>")
 def get_orders_by_customer(customer_id):
@@ -200,16 +211,20 @@ def get_orders_by_customer(customer_id):
 
 ### RESERVATIONS ###
 
+
 @app.route("/disasterStorage/reservations", methods=["GET", "POST"])
 def get_all_reservations():
     if request.method == "GET":
         return ReservationHandler().get_all_reservations()
 
     if request.method == "POST":
-        return ReservationHandler().insert_reservation(request.json);
+        return ReservationHandler().insert_reservation(request.json)
 
 
-@app.route("/disasterStorage/reservations/<int:reservation_id>", methods=["GET", "PUT", "DELETE"])
+@app.route(
+    "/disasterStorage/reservations/<int:reservation_id>",
+    methods=["GET", "PUT", "DELETE"],
+)
 def get_reservation_by_id(reservation_id):
     if request.method == "GET":
         return ReservationHandler().get_reservation_by_id(reservation_id)
@@ -220,10 +235,12 @@ def get_reservation_by_id(reservation_id):
     if request.method == "DELETE":
         return ReservationHandler().delete_reservation(reservation_id)
 
+
 @app.route("/disasterStorage/reservations/products/<int:product_id>")
 def get_reservations_by_product(product_id):
     if request.method == "GET":
         return ReservationHandler().get_reservations_by_product_id(product_id)
+
 
 @app.route("/disasterStorage/reservations/customers/<int:customer_id>")
 def get_reservations_by_customer(customer_id):
@@ -232,6 +249,7 @@ def get_reservations_by_customer(customer_id):
 
 
 ### REQUESTS ###
+
 
 @app.route("/disasterStorage/requests", methods=["GET", "POST"])
 def get_all_requests():
@@ -242,10 +260,12 @@ def get_all_requests():
         return RequestHandler().search_requests(request.args)
 
     if request.method == "POST":
-        return RequestHandler().insert_request(request.json);
+        return RequestHandler().insert_request(request.json)
 
 
-@app.route("/disasterStorage/requests/<int:request_id>", methods=["GET", "PUT", "DELETE"])
+@app.route(
+    "/disasterStorage/requests/<int:request_id>", methods=["GET", "PUT", "DELETE"]
+)
 def get_request_by_id(request_id):
     if request.method == "GET":
         return RequestHandler().get_request_by_id(request_id)
@@ -256,10 +276,12 @@ def get_request_by_id(request_id):
     if request.method == "DELETE":
         return RequestHandler().delete_request(request_id)
 
+
 @app.route("/disasterStorage/requests/products/<int:product_id>")
 def get_requests_by_product_id(product_id):
     if request.method == "GET":
         return RequestHandler().get_requests_by_product_id(product_id)
+
 
 @app.route("/disasterStorage/requests/customers/<int:customer_id>")
 def get_requests_by_customer_id(customer_id):

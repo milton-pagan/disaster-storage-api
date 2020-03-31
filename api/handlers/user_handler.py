@@ -56,18 +56,8 @@ class UserHandler(object):
             ErrorHandler().bad_request()
 
             if username and password and phone_number:
-                user_id = UserDAO().update_user(
-                    username,
-                    password,
-                    phone_number
-                )
-                return (self.build_user_dict(
-                    (
-                        username,
-                        password,
-                        phone_number
-                    )
-                ), 200)
+                user_id = UserDAO().update_user(username, password, phone_number)
+                return (self.build_user_dict((username, password, phone_number)), 200)
             else:
                 return ErrorHandler().bad_request()
         else:

@@ -2,13 +2,15 @@ from api.dao.request_dao import RequestDAO
 from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
-class RequestHandler(object):
 
+class RequestHandler(object):
     def build_request(self, record):
-        res_dict = {"request_id": record[0],
-                    "customer_id": record[1],
-                    "product_id": record[2],
-                    "request_quantity": record[3]}
+        res_dict = {
+            "request_id": record[0],
+            "customer_id": record[1],
+            "product_id": record[2],
+            "request_quantity": record[3],
+        }
         return res_dict
 
     def get_all_requests(self):
@@ -56,8 +58,13 @@ class RequestHandler(object):
         except KeyError:
             return ErrorHandler().bad_request()
 
-        request_id = RequestDAO().insert_request(customer_id, product_id, request_quantity)
-        return self.build_request((request_id, customer_id, product_id, request_quantity)), 201
+        request_id = RequestDAO().insert_request(
+            customer_id, product_id, request_quantity
+        )
+        return (
+            self.build_request((request_id, customer_id, product_id, request_quantity)),
+            201,
+        )
 
     def update_request(self, request_id, payload):
         if not self.get_request_by_id(request_id):
@@ -70,8 +77,13 @@ class RequestHandler(object):
         except KeyError:
             return ErrorHandler().bad_request()
 
-        request_id = RequestDAO().update_request(request_id, customer_id, product_id, request_quantity)
-        return self.build_request((request_id, customer_id, product_id, request_quantity)), 200
+        request_id = RequestDAO().update_request(
+            request_id, customer_id, product_id, request_quantity
+        )
+        return (
+            self.build_request((request_id, customer_id, product_id, request_quantity)),
+            200,
+        )
 
     def delete_request(self, request_id):
         if not self.get_request_by_id(request_id):

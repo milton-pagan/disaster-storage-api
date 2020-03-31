@@ -2,13 +2,15 @@ from api.dao.reservation_dao import ReservationDAO
 from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
-class ReservationHandler(object):
 
+class ReservationHandler(object):
     def build_reservation(self, record):
-        res_dict = {"reservation_id": record[0],
-                    "customer_id": record[1],
-                    "product_id": record[2],
-                    "reservation_quantity": record[3]}
+        res_dict = {
+            "reservation_id": record[0],
+            "customer_id": record[1],
+            "product_id": record[2],
+            "reservation_quantity": record[3],
+        }
         return res_dict
 
     def get_all_reservations(self):
@@ -44,8 +46,15 @@ class ReservationHandler(object):
         except KeyError:
             return ErrorHandler().bad_request()
 
-        reservation_id = ReservationDAO().insert_reservation(customer_id, product_id, reservation_quantity)
-        return self.build_reservation((reservation_id, customer_id, product_id, reservation_quantity)), 201
+        reservation_id = ReservationDAO().insert_reservation(
+            customer_id, product_id, reservation_quantity
+        )
+        return (
+            self.build_reservation(
+                (reservation_id, customer_id, product_id, reservation_quantity)
+            ),
+            201,
+        )
 
     def update_reservation(self, reservation_id, payload):
         if not self.get_reservation_by_id(reservation_id):
@@ -59,8 +68,15 @@ class ReservationHandler(object):
             return ErrorHandler().bad_request()
 
         dao = ReservationDAO()
-        reservation_id = dao.update_reservation(reservation_id, customer_id, product_id, reservation_quantity)
-        return self.build_reservation((reservation_id, customer_id, product_id, reservation_quantity)), 200
+        reservation_id = dao.update_reservation(
+            reservation_id, customer_id, product_id, reservation_quantity
+        )
+        return (
+            self.build_reservation(
+                (reservation_id, customer_id, product_id, reservation_quantity)
+            ),
+            200,
+        )
 
     def delete_reservation(self, reservation_id):
         if not self.get_reservation_by_id(reservation_id):

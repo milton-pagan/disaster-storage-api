@@ -2,14 +2,16 @@ from api.dao.order_dao import OrderDAO
 from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
-class OrderHandler(object):
 
+class OrderHandler(object):
     def build_order(self, record):
-        ord_dict = {"order_id": record[0],
-                    "customer_id": record[1],
-                    "product_id": record[2],
-                    "order_quantity": record[3],
-                    "order_total": record[4]}
+        ord_dict = {
+            "order_id": record[0],
+            "customer_id": record[1],
+            "product_id": record[2],
+            "order_quantity": record[3],
+            "order_total": record[4],
+        }
         return ord_dict
 
     def get_all_orders(self):
@@ -46,8 +48,15 @@ class OrderHandler(object):
         except KeyError:
             return ErrorHandler().bad_request()
 
-        order_id = OrderDAO().insert_order(customer_id, product_id, order_quantity, order_total)
-        return self.build_order((order_id, customer_id, product_id, order_quantity, order_total)), 201
+        order_id = OrderDAO().insert_order(
+            customer_id, product_id, order_quantity, order_total
+        )
+        return (
+            self.build_order(
+                (order_id, customer_id, product_id, order_quantity, order_total)
+            ),
+            201,
+        )
 
     def update_order(self, order_id, payload):
         if not self.get_order_by_id(order_id):
@@ -61,8 +70,15 @@ class OrderHandler(object):
         except KeyError:
             return ErrorHandler().bad_request()
 
-        order_id = OrderDAO().update_order(customer_id, order_id, product_id, order_quantity, order_total)
-        return self.build_order((order_id, customer_id, product_id, order_quantity, order_total)), 200
+        order_id = OrderDAO().update_order(
+            customer_id, order_id, product_id, order_quantity, order_total
+        )
+        return (
+            self.build_order(
+                (order_id, customer_id, product_id, order_quantity, order_total)
+            ),
+            200,
+        )
 
     def delete_order(self, order_id):
         if not self.get_order_by_id(order_id):
