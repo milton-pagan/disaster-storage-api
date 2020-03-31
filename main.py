@@ -3,6 +3,7 @@ from flask_cors import CORS, cross_origin
 from api.handlers.product_handler import ProductHandler
 from api.handlers.customer_handler import CustomerHandler
 from api.handlers.user_handler import UserHandler
+from api.handlers.request_handler import RequestHandler
 from api.handlers.reservation_handler import ReservationHandler
 from api.handlers.order_handler import OrderHandler
 
@@ -62,27 +63,6 @@ def get_all_suppliers():
 @app.route("/disasterStorage/users/<int:supplier_id>")
 def get_supplier_by_id(supplier_id):
     return
-
-
-### REQUESTS ###
-
-
-@app.route("/disasterStorage/requests", methods=["GET", "POST"])
-def get_all_requests():
-    return
-
-
-@app.route("/disasterStorage/requests/products")
-def get_all_requested_products():
-    if not request.args:
-        return "Req Prods"
-
-    else:
-        return "Keyword search"
-
-
-### PRODUCTS ###
-
 
 @app.route("/disasterStorage/products", methods=["GET", "POST"])
 def get_all_products():
@@ -194,6 +174,42 @@ def get_reservations_by_product(product_id):
 def get_reservations_by_customer(customer_id):
     if request.method == "GET":
         return ReservationHandler().get_reservations_by_customer_id(customer_id)
+
+
+### REQUESTS ###
+
+@app.route("/disasterStorage/requests", methods=["GET", "POST"])
+def get_all_requests():
+    if request.method == "GET":
+        if not request.args:
+            return RequestHandler().get_all_requests()
+
+        return RequestHandler().search_requests(request.args)
+
+    if request.method == "POST":
+        return RequestHandler().insert_request(request.json);
+
+
+@app.route("/disasterStorage/requests/<int:request_id>", methods=["GET", "PUT", "DELETE"])
+def get_request_by_id(request_id):
+    if request.method == "GET":
+        return RequestHandler().get_request_by_id(request_id)
+
+    if request.method == "PUT":
+        return RequestHandler().update_request(request_id, request.json)
+
+    if request.method == "DELETE":
+        return RequestHandler().delete_request(request_id)
+
+@app.route("/disasterStorage/requests/products/<int:product_id>")
+def get_requests_by_product_id(product_id):
+    if request.method == "GET":
+        return RequestHandler().get_requests_by_product_id(product_id)
+
+@app.route("/disasterStorage/requests/customers/<int:customer_id>")
+def get_requests_by_customer_id(customer_id):
+    if request.method == "GET":
+        return RequestHandler().get_requests_by_customer_id(customer_id)
 
 
 if __name__ == "__main__":
