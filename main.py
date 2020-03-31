@@ -148,12 +148,12 @@ def get_reservation_by_id(reservation_id):
 @app.route("/disasterStorage/reservations/products/<int:product_id>")
 def get_reservations_by_product(product_id):
     if request.method == "GET":
-        return ReservationHandler().get_reservations_by_product(product_id)
+        return ReservationHandler().get_reservations_by_product_id(product_id)
 
 @app.route("/disasterStorage/reservations/customers/<int:customer_id>")
 def get_reservations_by_customer(customer_id):
     if request.method == "GET":
-        return ReservationHandler().get_reservations_by_customer(customer_id)
+        return ReservationHandler().get_reservations_by_customer_id(customer_id)
 
 
 if __name__ == "__main__":

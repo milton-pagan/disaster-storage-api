@@ -8,8 +8,7 @@ class ReservationHandler(object):
         res_dict = {"reservation_id": record[0],
                     "customer_id": record[1],
                     "product_id": record[2],
-                    "reservation_quantity": record[3],
-                    "reservation_total": record[4]}
+                    "reservation_quantity": record[3]}
         return res_dict
 
     def get_all_reservations(self):
@@ -25,24 +24,16 @@ class ReservationHandler(object):
             return ErrorHandler().not_found()
         return jsonify(reservation=result), 200
 
-    def get_reservations_by_product(self, product_id):
-        results = ReservationDAO().get_reservations_by_product(product_id)
+    def get_reservations_by_product_id(self, product_id):
+        results = ReservationDAO().get_reservations_by_product_id(product_id)
         if not results:
             return ErrorHandler().not_found()
-        res_dict = []
-        for reservation in results:
-            res_dict.append(self.build_reservation(reservation))
-
         return jsonify(reservations=results), 200
 
-    def get_reservations_by_customer(self, customer_id):
-        results = ReservationDAO().get_reservations_by_customer(customer_id)
+    def get_reservations_by_customer_id(self, customer_id):
+        results = ReservationDAO().get_reservations_by_customer_id(customer_id)
         if not results:
             return ErrorHandler().not_found()
-        res_dict = []
-        for reservation in results:
-            res_dict.append(self.build_reservation(reservation))
-
         return jsonify(reservations=results), 200
 
     def insert_reservation(self, payload):
