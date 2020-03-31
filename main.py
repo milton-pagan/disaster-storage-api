@@ -144,12 +144,12 @@ def get_order_by_id(order_id):
 @app.route("/disasterStorage/orders/products/<int:product_id>")
 def get_orders_by_product(product_id):
     if request.method == "GET":
-        return OrderHandler().get_orders_by_product(product_id)
+        return OrderHandler().get_orders_by_product_id(product_id)
 
 @app.route("/disasterStorage/orders/customers/<int:customer_id>")
 def get_orders_by_customer(customer_id):
     if request.method == "GET":
-        return OrderHandler().get_orders_by_customer(customer_id)
+        return OrderHandler().get_orders_by_customer_id(customer_id)
 
 
 if __name__ == "__main__":

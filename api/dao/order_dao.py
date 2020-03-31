@@ -5,65 +5,47 @@ class OrderDAO(object):
 
     def get_all_orders(self):
         return [
-            {
-                "order_id": 1,
-                "customer_id:": 3,
-                "product_id": 20,
-                "order_quantity": 14,
-                "order_total": 19.99,
-            },
-            {
-                "order_id": 2,
-                "customer_id:": 6,
-                "product_id": 21,
-                "order_quantity": 7,
-                "order_total": 5.99,
-            },
-            {
-                "order_id": 3,
-                "customer_id:": 5,
-                "product_id": 22,
-                "order_quantity": 45,
-                "order_total": 50.75,
-            },
+            (1, 3, 20, 14, 19.99),
+            (2, 6, 21, 7, 5.99),
+            (3, 5, 22, 45, 50.75),
         ]
 
     def get_order_by_id(self, order_id):
         return [{
                 "order_id": 3,
-                "customer_id:": 5,
+                "customer_id": 5,
                 "product_id": 22,
                 "order_quantity": 45,
                 "order_total": 50.75,
             }]
 
-    def get_orders_by_product(self, product_id):
+    def get_orders_by_product_id(self, product_id):
         return [{
                 "order_id": 3,
-                "customer_id:": 5,
+                "customer_id": 5,
                 "product_id": 22,
                 "order_quantity": 45,
                 "order_total": 50.75,
                 },
                 {
                 "order_id": 7,
-                "customer_id:": 9,
+                "customer_id": 9,
                 "product_id": 22,
                 "order_quantity": 4,
                 "order_total": 4.11,
                 }]
 
-    def get_orders_by_customer(self, customer_id):
+    def get_orders_by_customer_id(self, customer_id):
         return [{
                 "order_id": 3,
-                "customer_id:": 5,
+                "customer_id": 5,
                 "product_id": 22,
                 "order_quantity": 45,
                 "order_total": 50.75,
                 },
                 {
                 "order_id": 15,
-                "customer_id:": 5,
+                "customer_id": 43,
                 "product_id": 22,
                 "order_quantity": 11,
                 "order_total": 7.75,

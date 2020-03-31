@@ -25,14 +25,14 @@ class OrderHandler(object):
             return ErrorHandler().not_found()
         return jsonify(order=result), 200
 
-    def get_orders_by_product(self, product_id):
-        results = OrderDAO().get_orders_by_product(product_id)
+    def get_orders_by_product_id(self, product_id):
+        results = OrderDAO().get_orders_by_product_id(product_id)
         if not results:
             return ErrorHandler().not_found()
         return jsonify(orders=results), 200
 
-    def get_orders_by_customer(self, customer_id):
-        results = OrderDAO().get_orders_by_customer(customer_id)
+    def get_orders_by_customer_id(self, customer_id):
+        results = OrderDAO().get_orders_by_customer_id(customer_id)
         if not results:
             return ErrorHandler().not_found()
         return jsonify(orders=results), 200
@@ -61,8 +61,8 @@ class OrderHandler(object):
         except KeyError:
             return ErrorHandler().bad_request()
 
-        order_id = OrderDAO().update_order(customer_id, product_id, order_quantity, order_total)
-        return self.build_order((order_id, product_id, order_quantity,order_total)), 200
+        order_id = OrderDAO().update_order(customer_id, order_id, product_id, order_quantity, order_total)
+        return self.build_order((order_id, customer_id, product_id, order_quantity, order_total)), 200
 
     def delete_order(self, order_id):
         if not self.get_order_by_id(order_id):
