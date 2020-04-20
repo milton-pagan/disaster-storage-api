@@ -186,3 +186,4 @@ dmypy.json
 .vscode/settings.json
 db_project.code-workspace
 .vscode/launch.json
+.main.py.swp
