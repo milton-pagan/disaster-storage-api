@@ -187,3 +187,5 @@ dmypy.json
 db_project.code-workspace
 .vscode/launch.json
 .main.py.swp
+Pipfile
+Pipfile.lock
