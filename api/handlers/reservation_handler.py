@@ -1,5 +1,5 @@
-from app.dao.reservation_dao import ReservationDAO
-from app.handlers.error_handler import ErrorHandler
+from api.dao.reservation_dao import ReservationDAO
+from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
 

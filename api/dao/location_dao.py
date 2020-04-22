@@ -1,5 +1,5 @@
 import psycopg2
-from app.config.config import get_config
+from api.config.config import get_config
 
 
 class LocationDAO(object):

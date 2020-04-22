@@ -1,5 +1,5 @@
-from app.dao.order_dao import OrderDAO
-from app.handlers.error_handler import ErrorHandler
+from api.dao.order_dao import OrderDAO
+from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
 

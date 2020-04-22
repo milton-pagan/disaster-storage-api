@@ -1,4 +1,4 @@
-from app.handlers.product_handler import ProductHandler
+from api.handlers.product_handler import ProductHandler
 
 
 class RequestDAO(object):

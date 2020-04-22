@@ -1,8 +1,8 @@
-from app.dao.customer_dao import CustomerDAO
-from app.dao.user_dao import UserDAO
-from app.dao.location_dao import LocationDAO
-from app.dao.credit_card_dao import CreditCardDAO
-from app.handlers.error_handler import ErrorHandler
+from api.dao.customer_dao import CustomerDAO
+from api.dao.user_dao import UserDAO
+from api.dao.location_dao import LocationDAO
+from api.dao.credit_card_dao import CreditCardDAO
+from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
 

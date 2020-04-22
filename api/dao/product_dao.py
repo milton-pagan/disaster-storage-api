@@ -1,6 +1,6 @@
 import psycopg2
 import psycopg2.extras
-from app.config.config import get_config
+from api.config.config import get_config
 
 
 class ProductDAO(object):

@@ -1,7 +1,7 @@
-from app.dao.product_dao import ProductDAO
-from app.dao.location_dao import LocationDAO
-from app.dao.category_dao import CategoryDAO
-from app.handlers.error_handler import ErrorHandler
+from api.dao.product_dao import ProductDAO
+from api.dao.location_dao import LocationDAO
+from api.dao.category_dao import CategoryDAO
+from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
 

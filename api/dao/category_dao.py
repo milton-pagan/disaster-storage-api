@@ -1,7 +1,7 @@
 import psycopg2
-from app.config.config import get_config
-from app.handlers.error_handler import ErrorHandler
-from app.dao.category_info import categories
+from api.config.config import get_config
+from api.handlers.error_handler import ErrorHandler
+from api.dao.category_info import categories
 
 
 class CategoryDAO(object):

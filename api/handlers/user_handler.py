@@ -1,5 +1,5 @@
-from app.dao.user_dao import UserDAO
-from app.handlers.error_handler import ErrorHandler
+from api.dao.user_dao import UserDAO
+from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
 

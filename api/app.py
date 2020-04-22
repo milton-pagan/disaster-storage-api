@@ -1,13 +1,13 @@
 from flask import Flask, jsonify, request
 from flask_cors import CORS, cross_origin
-from app.handlers.product_handler import ProductHandler
-from app.handlers.admin_handler import AdminHandler
-from app.handlers.customer_handler import CustomerHandler
-from app.handlers.supplier_handler import SupplierHandler
-from app.handlers.user_handler import UserHandler
-from app.handlers.request_handler import RequestHandler
-from app.handlers.reservation_handler import ReservationHandler
-from app.handlers.order_handler import OrderHandler
+from api.handlers.product_handler import ProductHandler
+from api.handlers.admin_handler import AdminHandler
+from api.handlers.customer_handler import CustomerHandler
+from api.handlers.supplier_handler import SupplierHandler
+from api.handlers.user_handler import UserHandler
+from api.handlers.request_handler import RequestHandler
+from api.handlers.reservation_handler import ReservationHandler
+from api.handlers.order_handler import OrderHandler
 
 
 app = Flask(__name__)

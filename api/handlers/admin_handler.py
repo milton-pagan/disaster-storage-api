@@ -1,5 +1,5 @@
-from app.dao.admin_dao import AdminDAO
-from app.handlers.error_handler import ErrorHandler
+from api.dao.admin_dao import AdminDAO
+from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
 
