@@ -12,17 +12,14 @@ class AdminHandler(object):
 
     def get_all_admins(self):
         result = AdminDAO().get_all_admins()
-        result_dict = []
-        for row in result:
-            result_dict.append(self.build_admin_dict(row))
-        return jsonify(admin=result_dict), 200
+        return jsonify(admin=result), 200
 
     def get_admin_by_id(self, user_id):
         result = AdminDAO().get_admin_by_id(user_id)
         if not result:
             return ErrorHandler().not_found()
         else:
-            return jsonify(admin=[self.build_admin_dict(result[0])]), 200
+            return jsonify(admin=result), 200
 
     def insert_admin(self, admin):
         try:
