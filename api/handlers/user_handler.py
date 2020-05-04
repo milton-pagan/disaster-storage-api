@@ -14,17 +14,14 @@ class UserHandler(object):
 
     def get_all_users(self):
         result = UserDAO().get_all_users()
-        result_dict = []
-        for row in result:
-            result_dict.append(self.build_user_dict(row))
-        return jsonify(users=result_dict), 200
+        return jsonify(users=result), 200
 
     def get_user_by_id(self, user_id):
         result = UserDAO().get_user_by_id(user_id)
         if not result:
             return ErrorHandler().not_found()
         else:
-            return jsonify(user=[self.build_user_dict(result[0])]), 200
+            return jsonify(user=result), 200
 
     def insert_user(self, form):
         if form and len(form) == 3:

@@ -125,6 +125,7 @@ def get_supplier_by_id(supplier_id):
     else:
         return SupplierHandler().delete_supplier(supplier_id)
 
+### PRODUCT ###
 
 @app.route("/disasterStorage/products", methods=["GET", "POST"])
 def get_all_products():
