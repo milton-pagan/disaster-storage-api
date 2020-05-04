@@ -41,7 +41,7 @@ class UserDAO(object):
         cursor = self.conn.cursor()
         query = "UPDATE public.user SET username=%s, password=%s, phone=%s" \
                 " WHERE user_id=%s;"
-        cursor.execute(query, (username, password, phone), )
+        cursor.execute(query, (username, password, phone, user_id), )
         user_id = cursor.fetchone()[0]
         self.conn.commit()
         return user_id
