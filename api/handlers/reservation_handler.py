@@ -9,22 +9,19 @@ class ReservationHandler(object):
             "reservation_id": record[0],
             "customer_id": record[1],
             "product_id": record[2],
-            "reservation_quantity": record[3],
+            "quantity": record[3],
         }
         return res_dict
 
     def get_all_reservations(self):
-        result = ReservationDAO().get_all_reservations()
-        res_dict = []
-        for reservation in result:
-            res_dict.append(self.build_reservation(reservation))
-        return jsonify(reservations=res_dict)
+        results = ReservationDAO().get_all_reservations()
+        return jsonify(reservations=results)
 
     def get_reservation_by_id(self, reservation_id):
-        result = ReservationDAO().get_reservation_by_id(reservation_id)
-        if not result:
+        results = ReservationDAO().get_reservation_by_id(reservation_id)
+        if not results:
             return ErrorHandler().not_found()
-        return jsonify(reservation=result), 200
+        return jsonify(reservation=results), 200
 
     def get_reservations_by_product_id(self, product_id):
         results = ReservationDAO().get_reservations_by_product_id(product_id)
@@ -42,45 +39,82 @@ class ReservationHandler(object):
         try:
             customer_id = payload["customer_id"]
             product_id = payload["product_id"]
-            reservation_quantity = payload["reservation_quantity"]
+            quantity = payload["quantity"]
         except KeyError:
             return ErrorHandler().bad_request()
 
         reservation_id = ReservationDAO().insert_reservation(
-            customer_id, product_id, reservation_quantity
+            customer_id, product_id, quantity
         )
+        if reservation_id == -1:
+            return ErrorHandler().bad_request("Product does not exist")
+
+        if reservation_id == -2:
+            return ErrorHandler().bad_request("Must Submit an order, not a reservation.")
+
         return (
             self.build_reservation(
-                (reservation_id, customer_id, product_id, reservation_quantity)
+                (reservation_id, customer_id, product_id, quantity)
             ),
             201,
         )
 
     def update_reservation(self, reservation_id, payload):
-        if not self.get_reservation_by_id(reservation_id):
+        reservation_dao = ReservationDAO()
+        if not reservation_dao.get_reservation_by_id(reservation_id):
             return ErrorHandler().not_found()
 
         try:
             customer_id = payload["customer_id"]
             product_id = payload["product_id"]
-            reservation_quantity = payload["reservation_quantity"]
+            quantity = payload["quantity"]
         except KeyError:
             return ErrorHandler().bad_request()
 
-        dao = ReservationDAO()
-        reservation_id = dao.update_reservation(
-            reservation_id, customer_id, product_id, reservation_quantity
+        reservation_id = reservation_dao.update_reservation(
+            reservation_id, customer_id, product_id, quantity
         )
+
+        if reservation_id == -1:
+            return ErrorHandler().bad_request("Given product does not exist")
+
+        if reservation_id == -2:
+            return ErrorHandler().bad_request("Must Submit an order for the new product, not a reservation.")
+
         return (
             self.build_reservation(
-                (reservation_id, customer_id, product_id, reservation_quantity)
+                (reservation_id, customer_id, product_id, quantity)
             ),
             200,
         )
 
-    def delete_reservation(self, reservation_id):
-        if not self.get_reservation_by_id(reservation_id):
+    def add_product(self, reservation_id, payload):
+        reservation_dao = ReservationDAO()
+        if not reservation_dao.get_reservation_by_id(reservation_id):
             return ErrorHandler().not_found()
-        else:
-            ReservationDAO().delete_reservation(reservation_id)
-            return jsonify(Deletion="Deleted"), 200
+
+        try:
+            product_id = payload["product_id"]
+            quantity = payload["quantity"]
+        except KeyError:
+            return ErrorHandler().bad_request()
+
+        new_quantity = reservation_dao.add_product(reservation_id, product_id, quantity)
+
+        if new_quantity == -1:
+            return ErrorHandler().bad_request("Given product does not exist")
+
+        if new_quantity == -2:
+            return ErrorHandler().bad_request("Must Submit an order for the new product, not a reservation.")
+
+        return self.build_reservation(
+            (reservation_id, "same", product_id, new_quantity)
+        ), 201
+
+    def delete_reservation(self, reservation_id):
+        reservation_dao = ReservationDAO()
+        if not reservation_dao.get_reservation_by_id(reservation_id):
+            return ErrorHandler().not_found()
+
+        reservation_dao.delete_reservation(reservation_id)
+        return jsonify(Deletion="Reservation Deleted"), 200
