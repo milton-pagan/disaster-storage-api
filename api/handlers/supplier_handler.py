@@ -37,10 +37,7 @@ class SupplierHandler(object):
 
     def get_all_suppliers(self):
         result = SupplierDAO().get_all_suppliers()
-        result_dict = []
-        for record in result:
-            result_dict.append(self.build_supplier(record))
-        return jsonify(supplier=result_dict), 200
+        return jsonify(supplier=result), 200
 
     def search_suppliers(self, supplier):
         try:
@@ -62,7 +59,7 @@ class SupplierHandler(object):
         result = SupplierDAO().get_supplier_by_id(supplier_id)
         if not result:
             return ErrorHandler().not_found()
-        return jsonify(supplier=[self.build_supplier(result[0])]), 200
+        return jsonify(supplier=result), 200
 
     def get_products_by_supplier_id(self, supplier_id):
         if not SupplierDAO().get_products_by_supplier_id(supplier_id):

@@ -8,29 +8,60 @@ class SupplierDAO(object):
     # General Supplier Operations
 
     def get_all_suppliers(self):
-        return [
-            (1, "Sam's", "San Juan", 4),
-            (2, "Pep Boys", "Mayaguez", 5),
-            (3, "Wallgreens", "Bayamon", 6),
-        ]
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        query = "SELECT * FROM supplier ORDER BY supplier_id"
+        cursor.excecute(query)
+
+        return cursor.fetchall()
 
     def get_suppliers_by_city(self, supplier_city):
-        return [(3, "Wallgreens", "Bayamon", 3)]
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        query = "SELECT supplier_name FROM supplier WHERE supplier_city=%s ORDER BY supplier_id"
+        cursor.excecute(query, (supplier_city,))
+
+        return cursor.fetchall()
 
     # Operations using Supplier Id
 
     def get_supplier_by_id(self, supplier_id):
-        return [(2, "Pep Boys", "Mayaguez", 2)]
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        query = "SELECT * FROM supplier WHERE supplier_id=%s ORDER BY supplier_id"
+        cursor.excecute(query, (supplier_id,))
+
+        return cursor.fetchone()
 
     def get_products_by_supplier_id(self, supplier_id):
-        return [
-            (1, "water bottle", 100, 0.0, "bottle of water", 1),
-            (2, "bouillon sausages", 50, 0.0, "8 count can", 2),
-        ]
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        query = "SELECT product_name FROM product NATURAL INNER JOIN supplies WHERE supplier_id=%s ORDER BY product_name;"
+        cursor.excecute(query, (supplier_id,))
 
-    def insert_supplier(self, supplier_name, supplier_city, location_id, user_id):
-        supplier_id = 10
+        return cursor.fetchall()
+
+    def get_supplier_location(self, supplier_id):
+        cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
+        query = "SELECT latitude, longitude FROM location WHERE location_id = (SELECT location_id FROM supplier WHERE supplier_id=%s);"
+        cursor.excecute(query, (supplier_id,))
+
+        return cursor.fetchone()[0]
+
+    def insert_supplier(self, username, password, phone, supplier_name, supplier_city, location_id):
+        cursor = self.conn.cursor()
+        query = "INSERT INTO supplier(username, password, phone, supplier_name, supplier_city, location_id) VALUES (%s, %s, %s, %s, %s, %s);"
+        cursor.excecute(
+            query,
+            (
+                username,
+                password,
+                phone,
+                supplier_name,
+                supplier_city,
+                location_id,
+            ),
+        )
+        supplier_id = cursor.fetchone()[0]
+        self.conn.commit()
         return supplier_id
+
 
     def update_supplier(self, supplier_id, supplier_name, supplier_city, location_id):
         return supplier_id, location_id

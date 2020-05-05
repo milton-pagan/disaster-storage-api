@@ -11,16 +11,18 @@ class CustomerHandler(object):
         object_dict = {}
         object_dict["customer_id"] = record[0]
         object_dict["customer_first_name"] = record[1]
-        object_dict["supplier_last_name"] = record[2]
-        object_dict["location_id"] = record[3]
+        object_dict["customer_last_name"] = record[2]
+        object_dict["customer_city"] = record[3]
+        object_dict["location_id"] = record[4]
         return object_dict
 
     def build_customer_user(self, record):
         object_dict = {}
         object_dict["customer_id"] = record[0]
         object_dict["customer_first_name"] = record[1]
-        object_dict["supplier_last_name"] = record[2]
-        object_dict["location_id"] = record[3]
+        object_dict["customer_last_name"] = record[2]
+        object_dict["customer_city"] = record[3]
+        object_dict["location_id"] = record[4]
         object_dict["user_id"] = record[5]
 
         return object_dict
@@ -29,10 +31,7 @@ class CustomerHandler(object):
 
     def get_all_customers(self):
         result = CustomerDAO().get_all_customer()
-        result_dict = []
-        for record in result:
-            result_dict.append(self.build_customer(record))
-        return jsonify(customer=result_dict), 200
+        return jsonify(customer=result), 200
 
     def search_customer(self, customer):
         try:
@@ -51,11 +50,40 @@ class CustomerHandler(object):
             else:
                 return ErrorHandler().bad_request()
 
+    # Operations Using Customer ID
+
     def get_customer_by_id(self, customer_id):
         result = CustomerDAO().get_customer_by_id(customer_id)
         if not result:
             return ErrorHandler().not_found()
-        return jsonify(customer=[self.build_customer(result[0])]), 200
+        return jsonify(customer=result), 200
+
+    def get_customer_location_by_id(self, customer_id):
+        result = CustomerDAO().get_customer_location_by_id(customer_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(customer=result), 200
+
+    # Operations that return the products names
+    # that (order, reserve or request) a specific customer
+
+    def get_product_ordered_by_customer(self, customer_id):
+        result = CustomerDAO().get_product_ordered_by_customer(customer_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(customer=result), 200
+
+    def get_product_reserved_by_customer(self, customer_id):
+        result = CustomerDAO().get_product_reserved_by_customer(customer_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(customer=result), 200
+
+    def get_product_requested_by_customer(self, customer_id):
+        result = CustomerDAO().get_product_requested_by_customer(customer_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(customer=result), 200
 
     # Supplier insertion, update and deletion
 

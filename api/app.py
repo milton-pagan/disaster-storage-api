@@ -93,6 +93,23 @@ def get_customer_by_id(customer_id):
     else:
         return CustomerHandler().delete_customer(customer_id)
 
+@app.route(
+    "/disasterStorage/users/customers/<int:customer_id>/location", methods=["GET"],
+)
+def get_customer_location_by_id(customer_id):
+    return CustomerHandler().get_customer_location_by_id(customer_id)
+
+@app.route( "/disasterStorage/users/customers/<int:customer_id>/products/ordered", methods=["GET"],)
+def get_product_ordered_by_customer(customer_id):
+    return CustomerHandler().get_product_ordered_by_customer(customer_id)
+
+@app.route( "/disasterStorage/users/customers/<int:customer_id>/products/reserved", methods=["GET"],)
+def get_product_reserved_by_customer(customer_id):
+    return CustomerHandler().get_product_reserved_by_customer(customer_id)
+
+@app.route( "/disasterStorage/users/customers/<int:customer_id>/products/requested", methods=["GET"],)
+def get_product_requested_by_customer(customer_id):
+    return CustomerHandler().get_product_requested_by_customer(customer_id)
 
 ### SUPPLIERS ###
 
