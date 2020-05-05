@@ -179,7 +179,7 @@ class OrderDAO(object):
     def delete_order_by_customer_id(self, customer_id):
         cursor = self.conn.cursor()
 
-        query = "delete from buys where order_id in (select order_id from orders where customer_id = 2);"
+        query = "delete from buys where order_id in (select order_id from orders where customer_id = %s);"
         cursor.execute(query, (customer_id,))
 
         query = "delete from orders where customer_id = %s;"
