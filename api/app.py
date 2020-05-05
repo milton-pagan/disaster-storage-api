@@ -186,7 +186,6 @@ def get_all_orders():
     if request.method == "POST":
         return OrderHandler().insert_order(request.json)
 
-
 @app.route("/disasterStorage/orders/<int:order_id>", methods=["GET", "PUT", "DELETE"])
 def get_order_by_id(order_id):
     if request.method == "GET":
@@ -196,6 +195,9 @@ def get_order_by_id(order_id):
     if request.method == "DELETE":
         return OrderHandler().delete_order(order_id)
 
+@app.route("/disasterStorage/orders/<int:order_id>/add", methods=["POST"])
+def insert_product_to_order(order_id):
+    return OrderHandler().add_product(order_id, request.json)
 
 @app.route("/disasterStorage/orders/products/<int:product_id>")
 def get_orders_by_product(product_id):
