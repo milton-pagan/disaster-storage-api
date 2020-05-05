@@ -9,10 +9,8 @@ from api.handlers.request_handler import RequestHandler
 from api.handlers.reservation_handler import ReservationHandler
 from api.handlers.order_handler import OrderHandler
 
-
 app = Flask(__name__)
 CORS(app)
-
 
 @app.route("/")
 def greet():
@@ -240,16 +238,23 @@ def get_reservation_by_id(reservation_id):
         return ReservationHandler().delete_reservation(reservation_id)
 
 
+@app.route("/disasterStorage/reservations/<int:reservation_id>/add", methods=["POST"])
+def insert_product_to_reservation(reservation_id):
+    return ReservationHandler().add_product(reservation_id, request.json)
+
+
 @app.route("/disasterStorage/reservations/products/<int:product_id>")
 def get_reservations_by_product(product_id):
     if request.method == "GET":
         return ReservationHandler().get_reservations_by_product_id(product_id)
 
 
-@app.route("/disasterStorage/reservations/customers/<int:customer_id>")
+@app.route("/disasterStorage/reservations/customers/<int:customer_id>", methods=["GET", "DELETE"])
 def get_reservations_by_customer(customer_id):
     if request.method == "GET":
         return ReservationHandler().get_reservations_by_customer_id(customer_id)
+    if request.method == "DELETE":
+        return ReservationHandler().delete_reservations_by_customer_id(customer_id)
 
 
 ### REQUESTS ###
