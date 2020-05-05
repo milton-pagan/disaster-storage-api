@@ -62,15 +62,16 @@ class SupplierHandler(object):
         return jsonify(supplier=result), 200
 
     def get_products_by_supplier_id(self, supplier_id):
-        if not SupplierDAO().get_products_by_supplier_id(supplier_id):
+        result = SupplierDAO().get_products_by_supplier_id(supplier_id)
+        if not result:
             return ErrorHandler().not_found()
+        return jsonify(ProductsSupplier=result)
 
-        parts_list = SupplierDAO().get_products_by_supplier_id(supplier_id)
-        result_list = []
-        for row in parts_list:
-            result = self.build_product(row)
-            result_list.append(result)
-        return jsonify(ProductsSupplier=result_list)
+    def get_supplier_location(self, supplier_id):
+        result = SupplierDAO().get_supplier_location(supplier_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(ProductsSupplier=result)
 
     # Supplier insertion, update and deletion
 
