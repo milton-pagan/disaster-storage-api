@@ -9,14 +9,14 @@ class SupplierDAO(object):
 
     def get_all_suppliers(self):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT * FROM supplier ORDER BY supplier_id"
+        query = "SELECT user_id, username, phone, supplier_id, supplier_name, supplier_city, location_id FROM supplier ORDER BY supplier_id;"
         cursor.excecute(query)
 
         return cursor.fetchall()
 
     def get_suppliers_by_city(self, supplier_city):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT supplier_name FROM supplier WHERE supplier_city=%s ORDER BY supplier_id"
+        query = "SELECT supplier_name FROM supplier WHERE supplier_city=%s ORDER BY supplier_id;"
         cursor.excecute(query, (supplier_city,))
 
         return cursor.fetchall()
@@ -25,7 +25,7 @@ class SupplierDAO(object):
 
     def get_supplier_by_id(self, supplier_id):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT * FROM supplier WHERE supplier_id=%s ORDER BY supplier_id"
+        query = "SELECT user_id, username, phone, supplier_id, supplier_name, supplier_city, location_id FROM supplier WHERE supplier_id=%s ORDER BY supplier_id;"
         cursor.excecute(query, (supplier_id,))
 
         return cursor.fetchone()
