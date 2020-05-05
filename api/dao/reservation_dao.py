@@ -141,3 +141,14 @@ class ReservationDAO(object):
         query = "delete from reservation where reservation_id = %s;"
         cursor.execute(query, (reservation_id,))
         self.conn.commit()
+
+    def delete_reservations_by_customer_id(self, customer_id):
+        cursor = self.conn.cursor()
+
+        query = "delete from reserves where reservation_id in (select reservation_id from reservation where customer_id = %s);"
+        cursor.execute(query, (customer_id,))
+
+        query = "delete from reservation where customer_id = %s;"
+        cursor.execute(query, (customer_id,))
+        self.conn.commit()
+

@@ -118,3 +118,11 @@ class ReservationHandler(object):
 
         reservation_dao.delete_reservation(reservation_id)
         return jsonify(Deletion="Reservation Deleted"), 200
+
+    def delete_reservations_by_customer_id(self, customer_id):
+        reservation_dao = ReservationDAO()
+        if not reservation_dao.get_reservations_by_customer_id(customer_id):
+            return ErrorHandler().not_found()
+
+        reservation_dao.delete_reservations_by_customer_id(customer_id)
+        return jsonify(Deletion="Reservation Deleted"), 200

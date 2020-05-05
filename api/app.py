@@ -245,10 +245,12 @@ def get_reservations_by_product(product_id):
         return ReservationHandler().get_reservations_by_product_id(product_id)
 
 
-@app.route("/disasterStorage/reservations/customers/<int:customer_id>")
+@app.route("/disasterStorage/reservations/customers/<int:customer_id>", methods=["GET", "DELETE"])
 def get_reservations_by_customer(customer_id):
     if request.method == "GET":
         return ReservationHandler().get_reservations_by_customer_id(customer_id)
+    if request.method == "DELETE":
+        return ReservationHandler().delete_reservations_by_customer_id(customer_id)
 
 
 ### REQUESTS ###
