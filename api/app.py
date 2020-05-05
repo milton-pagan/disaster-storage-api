@@ -52,7 +52,7 @@ def get_all_admins():
         return AdminHandler().insert_admin(request.json)
 
 
-@app.route("/disasterStorage/users/admin", methods=["GET", "PUT", "DELETE"])
+@app.route("/disasterStorage/users/admin/<int:admin_id>", methods=["GET", "PUT", "DELETE"])
 def get_admin_by_id(admin_id):
     if request.method == "GET":
         return AdminHandler().get_admin_by_id(admin_id)
@@ -99,6 +99,12 @@ def get_customer_by_id(customer_id):
 def get_customer_location_by_id(customer_id):
     return CustomerHandler().get_customer_location_by_id(customer_id)
 
+@app.route(
+    "/disasterStorage/users/customers/<int:customer_id>/creditCards", methods=["GET"],
+)
+def get_customer_ccard_by_id(customer_id):
+    return CustomerHandler().get_customer_ccard_by_id(customer_id)
+
 @app.route( "/disasterStorage/users/customers/<int:customer_id>/products/ordered", methods=["GET"],)
 def get_product_ordered_by_customer(customer_id):
     return CustomerHandler().get_product_ordered_by_customer(customer_id)
@@ -139,6 +145,18 @@ def get_supplier_by_id(supplier_id):
 
     else:
         return SupplierHandler().delete_supplier(supplier_id)
+
+@app.route(
+    "/disasterStorage/users/supplier/<int:supplier_id>/products", methods=["GET"],
+)
+def get_product_by_supplier_id(supplier_id):
+    return SupplierHandler().get_products_by_supplier_id(supplier_id)
+
+@app.route(
+    "/disasterStorage/users/supplier/<int:supplier_id>/location", methods=["GET"],
+)
+def get_supplier_location_by_id(supplier_id):
+    return SupplierHandler().get_supplier_location(supplier_id)
 
 ### PRODUCT ###
 

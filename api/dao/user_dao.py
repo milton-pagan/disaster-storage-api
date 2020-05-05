@@ -12,7 +12,7 @@ class UserDAO(object):
 
     def get_all_users(self):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT * FROM public.user ORDER BY user_id"
+        query = "SELECT * FROM public.user ORDER BY user_id;"
         cursor.excecute(query)
 
         return cursor.fetchall()
@@ -21,7 +21,7 @@ class UserDAO(object):
 
     def get_user_by_id(self, user_id):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT * FROM public.user WHERE user_id = %s"
+        query = "SELECT * FROM public.user WHERE user_id = %s;"
         cursor.excecute(query, (user_id,))
 
         return cursor.fetchone()
@@ -30,8 +30,7 @@ class UserDAO(object):
 
     def insert_user(self, username, password, phone):
         cursor = self.conn.cursor()
-        query = "INSERT INTO public.user(username, password, phone) " \
-                 "VALUES (%s, %s, %s);"
+        query = "INSERT INTO public.user(username, password, phone) VALUES (%s, %s, %s);"
         cursor.execute(query, (username, password, phone),)
         user_id = cursor.fetchone()[0]
         self.conn.commit()
@@ -39,8 +38,7 @@ class UserDAO(object):
 
     def update_user(self, user_id, username, password, phone):
         cursor = self.conn.cursor()
-        query = "UPDATE public.user SET username=%s, password=%s, phone=%s" \
-                " WHERE user_id=%s;"
+        query = "UPDATE public.user SET username=%s, password=%s, phone=%s WHERE user_id=%s;"
         cursor.execute(query, (username, password, phone, user_id), )
         user_id = cursor.fetchone()[0]
         self.conn.commit()

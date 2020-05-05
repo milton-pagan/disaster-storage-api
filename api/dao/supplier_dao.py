@@ -1,9 +1,11 @@
 import psycopg2
-
+import psycopg2.extras
+from api.config.config import get_config
 
 class SupplierDAO(object):
-    def init(self):
-        return
+
+    def __init__(self):
+        self.conn = psycopg2.connect(**get_config())
 
     # General Supplier Operations
 
