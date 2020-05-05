@@ -277,13 +277,22 @@ def get_request_by_id(request_id):
         return RequestHandler().delete_request(request_id)
 
 
+@app.route(
+    "/disasterStorage/requests/<int:request_id>/add", methods=["POST"]
+)
+def add_product_to_request(request_id):
+    return RequestHandler().add_product(request_id, request.json)
+
+
 @app.route("/disasterStorage/requests/products/<int:product_id>")
 def get_requests_by_product_id(product_id):
     if request.method == "GET":
         return RequestHandler().get_requests_by_product_id(product_id)
 
 
-@app.route("/disasterStorage/requests/customers/<int:customer_id>")
+@app.route("/disasterStorage/requests/customers/<int:customer_id>", methods=["GET", "DELETE"])
 def get_requests_by_customer_id(customer_id):
     if request.method == "GET":
         return RequestHandler().get_requests_by_customer_id(customer_id)
+    if request.method == "DELETE":
+        return RequestHandler().delete_requests_by_customer_id(customer_id)

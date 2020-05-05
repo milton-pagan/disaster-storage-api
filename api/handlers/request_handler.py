@@ -9,16 +9,13 @@ class RequestHandler(object):
             "request_id": record[0],
             "customer_id": record[1],
             "product_id": record[2],
-            "request_quantity": record[3],
+            "quantity": record[3],
         }
         return res_dict
 
     def get_all_requests(self):
-        result = RequestDAO().get_all_requests()
-        res_dict = []
-        for request in result:
-            res_dict.append(self.build_request(request))
-        return jsonify(requests=res_dict)
+        results = RequestDAO().get_all_requests()
+        return jsonify(requests=results)
 
     def get_request_by_id(self, request_id):
         result = RequestDAO().get_request_by_id(request_id)
@@ -39,13 +36,14 @@ class RequestHandler(object):
         return jsonify(requests=results), 200
 
     def search_requests(self, args):
+        request_dao = RequestDAO()
         try:
             keyword = args.get("keyword")
         except KeyError:
             return ErrorHandler().bad_request()
 
         if keyword:
-            result = RequestDAO().get_requests_by_keyword(keyword)
+            result = request_dao.get_requests_by_keyword(keyword)
             return jsonify(orders=result), 200
 
         return ErrorHandler().bad_request()
@@ -54,40 +52,76 @@ class RequestHandler(object):
         try:
             customer_id = payload["customer_id"]
             product_id = payload["product_id"]
-            request_quantity = payload["request_quantity"]
+            quantity = payload["quantity"]
         except KeyError:
             return ErrorHandler().bad_request()
 
         request_id = RequestDAO().insert_request(
-            customer_id, product_id, request_quantity
+            customer_id, product_id, quantity
         )
+        if request_id == -1:
+            return ErrorHandler().bad_request("Product does not exist")
         return (
-            self.build_request((request_id, customer_id, product_id, request_quantity)),
+            self.build_request((request_id, customer_id, product_id, quantity)),
             201,
         )
 
     def update_request(self, request_id, payload):
-        if not self.get_request_by_id(request_id):
+        request_dao = RequestDAO()
+        if not request_dao.get_request_by_id(request_id):
             return ErrorHandler().not_found()
 
         try:
             customer_id = payload["customer_id"]
             product_id = payload["product_id"]
-            request_quantity = payload["request_quantity"]
+            quantity = payload["quantity"]
         except KeyError:
             return ErrorHandler().bad_request()
 
         request_id = RequestDAO().update_request(
-            request_id, customer_id, product_id, request_quantity
+            request_id, customer_id, product_id, quantity
         )
+
+        if request_id == -1:
+            return ErrorHandler().bad_request("Given product does not exist")
+
         return (
-            self.build_request((request_id, customer_id, product_id, request_quantity)),
+            self.build_request((request_id, customer_id, product_id, quantity)),
             200,
         )
 
-    def delete_request(self, request_id):
-        if not self.get_request_by_id(request_id):
+    def add_product(self, request_id, payload):
+        request_dao = RequestDAO()
+        if not request_dao.get_request_by_id(request_id):
             return ErrorHandler().not_found()
-        else:
-            RequestDAO().delete_request(request_id)
-            return jsonify(Deletion="Deleted"), 200
+
+        try:
+            product_id = payload["product_id"]
+            quantity = payload["quantity"]
+        except KeyError:
+            return ErrorHandler().bad_request()
+
+        new_quantity = request_dao.add_product(request_id, product_id, quantity)
+
+        if new_quantity == -1:
+            return ErrorHandler().bad_request("Given product does not exist")
+
+        return self.build_request(
+            (request_id, "same", product_id, new_quantity)
+        ), 201
+
+    def delete_request(self, request_id):
+        request_dao = RequestDAO()
+        if not request_dao.get_request_by_id(request_id):
+            return ErrorHandler().not_found()
+
+        request_dao.delete_request(request_id)
+        return jsonify(Deletion="Request Deleted"), 200
+
+    def delete_requests_by_customer_id(self, customer_id):
+        request_dao = RequestDAO()
+        if not request_dao.get_requests_by_customer_id(customer_id):
+            return ErrorHandler().not_found()
+
+        request_dao.delete_requests_by_customer_id(customer_id)
+        return jsonify(Deletion="Reservations Deleted"), 200
