@@ -205,11 +205,12 @@ def get_orders_by_product(product_id):
         return OrderHandler().get_orders_by_product_id(product_id)
 
 
-@app.route("/disasterStorage/orders/customers/<int:customer_id>")
+@app.route("/disasterStorage/orders/customers/<int:customer_id>", methods=["GET", "DELETE"])
 def get_orders_by_customer(customer_id):
     if request.method == "GET":
         return OrderHandler().get_orders_by_customer_id(customer_id)
-
+    if request.method == "DELETE":
+        return OrderHandler().delete_order_by_customer_id(customer_id)
 
 ### RESERVATIONS ###
 

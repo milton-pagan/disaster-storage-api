@@ -40,10 +40,21 @@ class OrderDAO(object):
 
         query = "select cc_id from customer natural inner join credit_card where customer_id = %s;"
         cursor.execute(query, (customer_id,))
+
         try:
             cc_id = cursor.fetchone()[0]
         except TypeError:
             return -1
+
+        query = "select product_price from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+
+        try:
+            price = cursor.fetchone()[0]
+            if price == 0:
+                return -3
+        except TypeError:
+            return -2
 
         query = (
                 "insert into orders (customer_id, order_total, cc_id)"
@@ -67,10 +78,21 @@ class OrderDAO(object):
 
         query = "select cc_id from customer natural inner join credit_card where customer_id = %s;"
         cursor.execute(query, (customer_id,))
+
         try:
             cc_id = cursor.fetchone()[0]
         except TypeError:
             return -1
+
+        query = "select product_price from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+
+        try:
+            price = cursor.fetchone()[0]
+            if price == 0:
+                return -3
+        except TypeError:
+            return -2
 
         query = "delete from buys where order_id = %s;"
         cursor.execute(query, (order_id,))
@@ -94,6 +116,16 @@ class OrderDAO(object):
 
     def add_product(self, order_id, product_id, quantity, total):
         cursor = self.conn.cursor()
+
+        query = "select product_price from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+
+        try:
+            price = cursor.fetchone()[0]
+            if price == 0:
+                return -3
+        except TypeError:
+            return -2
 
         query = "select quantity from buys where order_id = %s and product_id = %s;"
         cursor.execute(query, (order_id, product_id))
@@ -142,4 +174,14 @@ class OrderDAO(object):
 
         query = "delete from orders where order_id = %s;"
         cursor.execute(query, (order_id,))
+        self.conn.commit()
+
+    def delete_order_by_customer_id(self, customer_id):
+        cursor = self.conn.cursor()
+
+        query = "delete from buys where order_id in (select order_id from orders where customer_id = 2);"
+        cursor.execute(query, (customer_id,))
+
+        query = "delete from orders where customer_id = %s;"
+        cursor.execute(query, (customer_id,))
         self.conn.commit()

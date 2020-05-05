@@ -51,6 +51,12 @@ class OrderHandler(object):
         if order_id == -1:
             return ErrorHandler().bad_request("Customer without credit card")
 
+        if order_id == -2:
+            return ErrorHandler().bad_request("Product does not exist")
+
+        if order_id == -3:
+            return ErrorHandler().bad_request("Must Submit a reservation, not a order.")
+
         return (
             self.build_order(
                 (order_id, customer_id, product_id, quantity, order_total)
@@ -77,6 +83,12 @@ class OrderHandler(object):
         if order_id == -1:
             return ErrorHandler().bad_request("New customer without credit card")
 
+        if order_id == -2:
+            return ErrorHandler().bad_request("Product does not exist")
+
+        if order_id == -3:
+            return ErrorHandler().bad_request("Must Submit a reservation for the new product, not a order.")
+
         return (
             self.build_order(
                 (order_id, customer_id, product_id, quantity, order_total)
@@ -95,7 +107,15 @@ class OrderHandler(object):
             total = payload["total"]
         except KeyError:
             return ErrorHandler().bad_request()
+
         order_total = order_dao.add_product(order_id, product_id, quantity, total)
+
+        if order_id == -2:
+            return ErrorHandler().bad_request("Product does not exist")
+
+        if order_id == -3:
+            return ErrorHandler().bad_request("Must Submit a reservation for the new product, not a order.")
+
         return self.build_order(
             (order_id, "same", product_id, quantity, order_total)
         ), 201
@@ -107,3 +127,11 @@ class OrderHandler(object):
 
         order_dao.delete_order(order_id)
         return jsonify(Deletion="Order deleted"), 200
+
+    def delete_order_by_customer_id(self, customer_id):
+        order_dao = OrderDAO()
+        if not order_dao.get_orders_by_customer_id(customer_id):
+            return ErrorHandler().not_found()
+
+        order_dao.delete_order_by_customer_id(customer_id)
+        return jsonify(Deletion="Orders deleted"), 200
