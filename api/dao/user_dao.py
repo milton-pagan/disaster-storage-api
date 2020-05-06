@@ -12,8 +12,8 @@ class UserDAO(object):
 
     def get_all_users(self):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT * FROM public.user ORDER BY user_id;"
-        cursor.excecute(query)
+        query = "SELECT * FROM public.user ORDER BY user_id"
+        cursor.execute(query)
 
         return cursor.fetchall()
 
@@ -22,7 +22,7 @@ class UserDAO(object):
     def get_user_by_id(self, user_id):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
         query = "SELECT * FROM public.user WHERE user_id = %s;"
-        cursor.excecute(query, (user_id,))
+        cursor.execute(query, (user_id,))
 
         return cursor.fetchone()
 
