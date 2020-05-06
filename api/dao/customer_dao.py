@@ -40,7 +40,7 @@ class CustomerDAO(object):
 
     def get_customer_ccard_by_id(self, customer_id):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT cc_id, cc_type, cc_number FROM customer NATURAL INNER JOIN credit_card WHERE customer_id = 6 ORDER BY cc_id;"
+        query = "SELECT cc_id, cc_type, cc_number FROM customer NATURAL INNER JOIN credit_card WHERE customer_id =%s ORDER BY cc_id;"
         cursor.execute(query, (customer_id,))
 
         return cursor.fetchall()
