@@ -64,6 +64,12 @@ class CustomerHandler(object):
             return ErrorHandler().not_found()
         return jsonify(customer=result), 200
 
+    def get_customer_ccard_by_id(self, customer_id):
+        result = CustomerDAO().get_customer_ccard_by_id(customer_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(customer=result), 200
+
     # Operations that return the products names
     # that (order, reserve or request) a specific customer
 
