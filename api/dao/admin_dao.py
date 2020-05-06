@@ -8,14 +8,14 @@ class AdminDAO(object):
 
     def get_all_admins(self):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT * FROM admin NATURAL INNER JOIN public.user ORDER BY admin_id;"
+        query = "SELECT user_id, username, phone, admin_id, admin_name FROM public.admin NATURAL INNER JOIN public.user ORDER BY admin_id;"
         cursor.execute(query)
 
         return cursor.fetchall()
 
     def get_admin_by_id(self, admin_id):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT * FROM admin WHERE admin_id= %s;"
+        query = "SELECT user_id, username, phone, admin_id, admin_name FROM public.admin NATURAL INNER JOIN public.user WHERE admin_id=%s;"
         cursor.execute(query, (admin_id,))
 
         return cursor.fetchone()
