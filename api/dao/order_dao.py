@@ -132,11 +132,7 @@ class OrderDAO(object):
 
         try:
             current_quantity = cursor.fetchone()[0]
-            print("Current Quantity")
-            print(current_quantity)
             new_quantity = current_quantity + quantity
-            print("New Quantity")
-            print(new_quantity)
             query = (
                 "update buys set quantity = %s"
                 + "where order_id = %s and product_id = %s;"
@@ -146,21 +142,16 @@ class OrderDAO(object):
         except TypeError:
             query = ("insert into buys (order_id, product_id, quantity)"
                      + "values (%s, %s, %s);")
-            print("In except")
             cursor.execute(query, (order_id, product_id, quantity))
 
         # Update order_total
         query = "select order_total from orders where order_id = %s;"
         cursor.execute(query, (order_id,))
         new_total = cursor.fetchone()[0] + total
-        print("New Total")
-        print(new_total)
         query = "update orders set order_total = %s from buys where orders.order_id = %s and product_id = %s returning orders.order_total;"
         cursor.execute(query, (new_total, order_id, product_id))
 
         order_total = cursor.fetchone()[0]
-        print("Order Total")
-        print(order_total)
 
         self.conn.commit()
 

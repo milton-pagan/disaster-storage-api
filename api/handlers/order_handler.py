@@ -110,10 +110,10 @@ class OrderHandler(object):
 
         order_total = order_dao.add_product(order_id, product_id, quantity, total)
 
-        if order_id == -2:
+        if order_total == -2:
             return ErrorHandler().bad_request("Product does not exist")
 
-        if order_id == -3:
+        if order_total == -3:
             return ErrorHandler().bad_request("Must Submit a reservation for the new product, not a order.")
 
         return self.build_order(

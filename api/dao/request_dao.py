@@ -44,7 +44,7 @@ class RequestDAO(object):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
 
         query = (
-            "select * from request natural inner join product where product_name ilike %s order by product_name;"
+            "select * from request natural inner join requests natural inner join product where product_name ilike %s order by product_name;"
         )
         keyword = "%" + keyword + "%"
         cursor.execute(query, (keyword,))
