@@ -10,7 +10,7 @@ class CustomerDAO(object):
 
     def get_all_customer(self):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT user_id, username, phone, customer_id, customer_first_name, customer_last_name, customer_city, location_id FROM customer NATURAL INNER JOIN PUBLIC.USER ORDER BY customer_id;"
+        query = "SELECT user_id, username, phone, customer_id, customer_first_name, customer_last_name, customer_city, customer_address, location_id FROM customer NATURAL INNER JOIN PUBLIC.USER ORDER BY customer_id;"
         cursor.execute(query)
 
         return cursor.fetchall()
@@ -26,7 +26,7 @@ class CustomerDAO(object):
 
     def get_customer_by_id(self, customer_id):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT user_id, username, phone, customer_id, customer_first_name, customer_last_name, customer_city, location_id FROM customer NATURAL INNER JOIN PUBLIC.USER WHERE customer_id=%s ORDER BY customer_id;"
+        query = "SELECT user_id, username, phone, customer_id, customer_first_name, customer_last_name, customer_city, customer_address, location_id FROM customer NATURAL INNER JOIN PUBLIC.USER WHERE customer_id=%s ORDER BY customer_id;"
         cursor.execute(query, (customer_id,))
 
         return cursor.fetchone()
