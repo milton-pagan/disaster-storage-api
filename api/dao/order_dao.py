@@ -56,6 +56,13 @@ class OrderDAO(object):
         except TypeError:
             return -2
 
+        # Verify product_quantity
+        query = "select product_quantity from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+        current_quantity = cursor.fetchone()[0]
+        if current_quantity - quantity < 0:
+            return -4
+
         query = (
                 "insert into orders (customer_id, order_total, cc_id)"
                 + "values (%s, %s, %s) returning order_id;"
@@ -67,6 +74,11 @@ class OrderDAO(object):
                  + "values (%s, %s, %s);")
 
         cursor.execute(query, (order_id, product_id, quantity))
+
+        # Update product_quantity
+        new_quantity = current_quantity - quantity
+        query = "update product set product_quantity = %s where product_id = %s;"
+        cursor.execute(query, (new_quantity, product_id))
 
         self.conn.commit()
         return order_id
@@ -94,6 +106,10 @@ class OrderDAO(object):
         except TypeError:
             return -2
 
+        # TODO Return products to storage
+
+        # TODO Verify new product quantity
+
         query = "delete from buys where order_id = %s;"
         cursor.execute(query, (order_id,))
 
@@ -106,6 +122,8 @@ class OrderDAO(object):
                 "update orders set customer_id = %s, cc_id = %s, order_total = %s"
                 + "where order_id = %s returning order_id;"
         )
+
+        # TODO Discount products from storage
 
         cursor.execute(query, (customer_id, cc_id, order_total, order_id))
         order_id_out = cursor.fetchone()[0]
@@ -130,6 +148,8 @@ class OrderDAO(object):
         query = "select quantity from buys where order_id = %s and product_id = %s;"
         cursor.execute(query, (order_id, product_id))
 
+        # TODO Verify new product quantity
+
         try:
             current_quantity = cursor.fetchone()[0]
             new_quantity = current_quantity + quantity
@@ -152,6 +172,8 @@ class OrderDAO(object):
         cursor.execute(query, (new_total, order_id, product_id))
 
         order_total = cursor.fetchone()[0]
+
+        # TODO Discount products from storage
 
         self.conn.commit()
 

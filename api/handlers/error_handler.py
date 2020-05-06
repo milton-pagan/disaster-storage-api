@@ -7,3 +7,6 @@ class ErrorHandler(object):
 
     def bad_request(self, message="Bad request"):
         return make_response(jsonify({"Error": message}), 400)
+
+    def conflict(self, message="Conflict"):
+        return make_response(jsonify({"Error": message}), 409)

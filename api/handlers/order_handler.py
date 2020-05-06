@@ -116,6 +116,9 @@ class OrderHandler(object):
         if order_total == -3:
             return ErrorHandler().bad_request("Must Submit a reservation for the new product, not a order.")
 
+        if order_total == -4:
+            return ErrorHandler().conflict("Not enough resources")
+
         return self.build_order(
             (order_id, "same", product_id, quantity, order_total)
         ), 201
