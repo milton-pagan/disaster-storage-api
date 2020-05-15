@@ -25,7 +25,7 @@ def get_all_users():
     if request.method == "GET":
         return UserHandler().get_all_users()
 
-    elif request == "POST":
+    elif request.method == "POST":
         return UserHandler().insert_user(request.json)
 
 

@@ -1,4 +1,5 @@
 from api.dao.admin_dao import AdminDAO
+from api.dao.user_dao import UserDAO
 from api.handlers.error_handler import ErrorHandler
 from flask import jsonify
 
@@ -22,20 +23,29 @@ class AdminHandler(object):
             return jsonify(admin=result), 200
 
     def insert_admin(self, admin):
+        admin_dao = AdminDAO()
+        user_dao = UserDAO()
+
         try:
             admin_name = admin["admin_name"]
-
+            username = admin["username"]
+            password = admin["password"]
+            phone_number = admin["phone_number"]
         except KeyError:
             ErrorHandler().bad_request()
 
-            if admin_name:
-                admin_id = AdminDAO().insert_admin(admin_name)
-                return (self.build_admin_dict(admin_id, admin_name)), 201
+        user_id = user_dao.insert_user(username, password, phone_number)
+        admin_id = admin_dao.insert_admin(admin_name, user_id)
 
-            else:
-                return ErrorHandler().bad_request()
-        else:
-            return ErrorHandler().bad_request()
+        return (self.build_admin_dict(
+                 (
+                    admin_id,
+                    admin_name,
+                    user_id,
+                 )
+            ), 201,
+        )
+
 
     def update_admin(self, admin_id, admin):
         if not self.get_admin_by_id(admin_id):
