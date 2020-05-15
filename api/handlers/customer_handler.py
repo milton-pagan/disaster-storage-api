@@ -96,6 +96,7 @@ class CustomerHandler(object):
             customer_first_name = customer["customer_first_name"]
             customer_last_name = customer["customer_last_name"]
             customer_city = customer["customer_city"]
+            customer_address = customer["customer_address"]
             latitude = customer["latitude"]
             longitude = customer["longitude"]
             username = customer["username"]
@@ -106,30 +107,30 @@ class CustomerHandler(object):
         except KeyError:
             ErrorHandler().bad_request()
 
-            user_id = user_dao.insert_user(username, password, phone)
-            location_id = location_dao.insert_location(latitude, longitude)
-            customer_id = customer_dao.insert_customer(
+        user_id = user_dao.insert_user(username, password, phone)
+        location_id = location_dao.insert_location(latitude, longitude)
+        customer_id = customer_dao.insert_customer(
+                customer_first_name,
+                customer_last_name,
+                customer_city,
+                location_id,
+                user_id,
+                customer_address,
+            )
+
+        return (
+            self.build_customer_user(
+                (
+                    customer_id,
                     customer_first_name,
                     customer_last_name,
                     customer_city,
                     location_id,
                     user_id,
                 )
-            cc_dao.insert_credit_card(cc_type, cc_number, customer_id)
-
-            return (
-                    self.build_customer_user(
-                        (
-                            customer_id,
-                            customer_first_name,
-                            customer_last_name,
-                            customer_city,
-                            location_id,
-                            user_id,
-                        )
-                    ),
-                    201,
-                )
+            ),
+            201,
+        )
 
     def update_customer(self, customer_id, customer):
         if not self.get_customer_by_id(customer_id):
