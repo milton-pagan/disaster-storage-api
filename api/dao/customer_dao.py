@@ -75,10 +75,25 @@ class CustomerDAO(object):
         customer_last_name,
         customer_city,
         location_id,
-        cc_id,
         user_id,
+        customer_address,
     ):
-        customer_id = 9
+        cursor = self.conn.cursor()
+        query = ("INSERT INTO customer(customer_first_name, customer_last_name, customer_city, user_id, location_id, customer_address)"
+                 + "VALUES (%s, %s, %s, %s, %s, %s) returning user_id;")
+        cursor.execute(
+            query,
+            (
+                customer_first_name,
+                customer_last_name,
+                customer_city,
+                user_id,
+                location_id,
+                customer_address,
+            ),
+        )
+        customer_id = cursor.fetchone()[0]
+        self.conn.commit()
         return customer_id
 
     def update_customer(

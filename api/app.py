@@ -75,7 +75,7 @@ def get_all_customers():
         else:
             return CustomerHandler().search_customer(request.args)
 
-    elif request == "POST":
+    elif request.method == "POST":
         return CustomerHandler().insert_customer(request.json)
 
 
