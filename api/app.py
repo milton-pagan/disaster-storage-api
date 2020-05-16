@@ -79,6 +79,11 @@ def get_all_customers():
         return CustomerHandler().insert_customer(request.json)
 
 
+@app.route("/disasterStorage/users/customers/<int:customer_id>/credit/card", methods=["POST"])
+def insert_credit_card_by_customer_id(customer_id):
+    return CustomerHandler().insert_credit_card_by_customer_id(customer_id, request.json)
+
+
 @app.route(
     "/disasterStorage/users/customers/<int:customer_id>",
     methods=["GET", "PUT", "DELETE"],
@@ -130,6 +135,11 @@ def get_all_suppliers():
 
     elif request.method == "POST":
         return SupplierHandler().insert_supplier(request.json)
+
+
+@app.route("/disasterStorage/users/suppliers/<int:supplier_id>/supplies/product/<int:product_id>", methods=["POST"])
+def insert_supplies_product(supplier_id, product_id):
+    return SupplierHandler().insert_supplies_product_by_supplier_id(supplier_id, product_id)
 
 
 @app.route(

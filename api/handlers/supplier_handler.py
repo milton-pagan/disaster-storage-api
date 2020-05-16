@@ -86,6 +86,12 @@ class SupplierHandler(object):
             201,
         )
 
+    def insert_supplies_product_by_supplier_id(self, customer_id, product_id):
+        result = SupplierDAO().insert_supplies_product_by_supplier_id(customer_id,product_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(SupplierProducts=result)
+
     def update_supplier(self, supplier_id, supplier):
         if not self.get_supplier_by_id(supplier_id):
             return ErrorHandler().not_found()

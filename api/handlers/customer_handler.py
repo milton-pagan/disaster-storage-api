@@ -19,6 +19,14 @@ class CustomerHandler(object):
 
         return object_dict
 
+    def build_credit_card(self, record):
+        object_dict = {}
+        object_dict["cc_type"] = record[0]
+        object_dict["cc_number"] = record[1]
+        object_dict["customer_id"] = record[2]
+
+        return object_dict
+
     # General Supplier Operations
 
     def get_all_customers(self):
@@ -102,8 +110,7 @@ class CustomerHandler(object):
             username = customer["username"]
             password = customer["password"]
             phone = customer["phone"]
-            cc_type = customer["cc_type"]
-            cc_number = customer["cc_number"]
+
         except KeyError:
             ErrorHandler().bad_request()
 
@@ -127,6 +134,29 @@ class CustomerHandler(object):
                     customer_city,
                     location_id,
                     user_id,
+                )
+            ),
+            201,
+        )
+
+    def insert_credit_card_by_customer_id(self, customer_id, card):
+        credit_card_dao = CreditCardDAO()
+
+        try:
+            cc_type = card["cc_type"]
+            cc_number = card["cc_number"]
+
+        except KeyError:
+            ErrorHandler().bad_request()
+
+        credit_id = credit_card_dao.insert_credit_card(cc_type, cc_number, customer_id)
+
+        return (
+            self.build_credit_card(
+                (
+                    cc_type,
+                    cc_number,
+                    customer_id
                 )
             ),
             201,
