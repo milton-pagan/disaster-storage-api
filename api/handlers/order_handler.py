@@ -57,6 +57,9 @@ class OrderHandler(object):
         if order_id == -3:
             return ErrorHandler().bad_request("Must Submit a reservation, not a order.")
 
+        if order_id == -4:
+            return ErrorHandler().bad_request("Not enough resources")
+
         return (
             self.build_order(
                 (order_id, customer_id, product_id, quantity, order_total)
@@ -89,6 +92,9 @@ class OrderHandler(object):
         if order_id == -3:
             return ErrorHandler().bad_request("Must Submit a reservation for the new product, not a order.")
 
+        if order_id == -4:
+            return ErrorHandler().bad_request("Not enough resources")
+
         return (
             self.build_order(
                 (order_id, customer_id, product_id, quantity, order_total)
@@ -117,7 +123,7 @@ class OrderHandler(object):
             return ErrorHandler().bad_request("Must Submit a reservation for the new product, not a order.")
 
         if order_total == -4:
-            return ErrorHandler().conflict("Not enough resources")
+            return ErrorHandler().conflict("Not enough resources to add")
 
         return self.build_order(
             (order_id, "same", product_id, quantity, order_total)
