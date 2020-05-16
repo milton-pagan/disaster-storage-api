@@ -48,7 +48,8 @@ class SupplierDAO(object):
 
     def insert_supplier(self, username, password, phone, supplier_name, supplier_city, location_id):
         cursor = self.conn.cursor()
-        query = "INSERT INTO supplier(username, password, phone, supplier_name, supplier_city, location_id) VALUES (%s, %s, %s, %s, %s, %s);"
+        query = "INSERT INTO supplier(username, password, phone, supplier_name, supplier_city, location_id)"\
+                +"VALUES (%s, %s, %s, %s, %s, %s) returning supplier_id;"
         cursor.execute(
             query,
             (

@@ -128,7 +128,7 @@ def get_all_suppliers():
         else:
             return SupplierHandler().search_suppliers(request.args)
 
-    elif request == "POST":
+    elif request.method == "POST":
         return SupplierHandler().insert_supplier(request.json)
 
 
