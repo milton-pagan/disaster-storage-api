@@ -1,4 +1,5 @@
 import psycopg2
+from pkg_resources.py2_warn import pre
 
 from api.config.config import get_config
 
@@ -59,9 +60,12 @@ class OrderDAO(object):
         # Verify product_quantity
         query = "select product_quantity from product where product_id = %s;"
         cursor.execute(query, (product_id,))
-        current_quantity = cursor.fetchone()[0]
-        if current_quantity - quantity < 0:
-            return -4
+        try:
+            current_quantity = cursor.fetchone()[0]
+            if current_quantity - quantity < 0:
+                return -4
+        except TypeError:
+            return -2
 
         query = (
                 "insert into orders (customer_id, order_total, cc_id)"
@@ -106,10 +110,35 @@ class OrderDAO(object):
         except TypeError:
             return -2
 
-        # TODO Return products to storage
+        query = "select product_id from buys where order_id = %s;"
+        cursor.execute(query, (order_id,))
 
-        # TODO Verify new product quantity
+        # Return products to storage
+        old_product_id = cursor.fetchone()[0]
 
+        query = "select quantity from buys where product_id = %s and order_id = %s;"
+        cursor.execute(query, (old_product_id, order_id))
+
+        previous_quantity = cursor.fetchone()[0]
+
+        query = "select product_quantity from product where product_id = %s;"
+        cursor.execute(query, (old_product_id,))
+        current_qty = cursor.fetchone()[0]
+
+        query = "update product set product_quantity = %s where product_id = %s;"
+        cursor.execute(query, (current_qty + previous_quantity, old_product_id))
+
+        # Verify product_quantity
+        query = "select product_quantity from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+        try:
+            current_quantity = cursor.fetchone()[0]
+            if current_quantity - quantity < 0:
+                return -4
+        except TypeError:
+            return -2
+
+        # Update order
         query = "delete from buys where order_id = %s;"
         cursor.execute(query, (order_id,))
 
@@ -118,12 +147,15 @@ class OrderDAO(object):
 
         cursor.execute(query, (order_id, product_id, quantity))
 
+        # Discount products from storage
+        new_quantity = current_quantity - quantity
+        query = "update product set product_quantity = %s where product_id = %s;"
+        cursor.execute(query, (new_quantity, product_id))
+
         query = (
                 "update orders set customer_id = %s, cc_id = %s, order_total = %s"
                 + "where order_id = %s returning order_id;"
         )
-
-        # TODO Discount products from storage
 
         cursor.execute(query, (customer_id, cc_id, order_total, order_id))
         order_id_out = cursor.fetchone()[0]
@@ -148,11 +180,11 @@ class OrderDAO(object):
         query = "select quantity from buys where order_id = %s and product_id = %s;"
         cursor.execute(query, (order_id, product_id))
 
-        # TODO Verify new product quantity
-
+        # Verify new product quantity
         try:
             current_quantity = cursor.fetchone()[0]
             new_quantity = current_quantity + quantity
+
             query = (
                 "update buys set quantity = %s"
                 + "where order_id = %s and product_id = %s;"
@@ -160,9 +192,20 @@ class OrderDAO(object):
             cursor.execute(query, (new_quantity, order_id, product_id))
 
         except TypeError:
+            new_quantity = quantity
             query = ("insert into buys (order_id, product_id, quantity)"
                      + "values (%s, %s, %s);")
             cursor.execute(query, (order_id, product_id, quantity))
+
+        # Verify DB product_quantity
+        query = "select product_quantity from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+        try:
+            db_current_quantity = cursor.fetchone()[0]
+            if db_current_quantity < new_quantity:
+                return -4
+        except TypeError:
+            pass
 
         # Update order_total
         query = "select order_total from orders where order_id = %s;"
@@ -173,7 +216,10 @@ class OrderDAO(object):
 
         order_total = cursor.fetchone()[0]
 
-        # TODO Discount products from storage
+        # Discount products from storage
+        db_new_quantity = db_current_quantity - quantity
+        query = "update product set product_quantity = %s where product_id = %s;"
+        cursor.execute(query, (db_new_quantity, product_id))
 
         self.conn.commit()
 

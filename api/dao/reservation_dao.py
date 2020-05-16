@@ -49,6 +49,16 @@ class ReservationDAO(object):
         except TypeError:
             return -1
 
+        # Verify product_quantity
+        query = "select product_quantity from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+        try:
+            current_quantity = cursor.fetchone()[0]
+            if current_quantity - quantity < 0:
+                return -4
+        except TypeError:
+            return -1
+
         query = (
                 "insert into reservation (customer_id)"
                 + "values (%s) returning reservation_id;"
@@ -60,6 +70,11 @@ class ReservationDAO(object):
         query = ("insert into reserves(reservation_id, product_id, quantity)"
                  + "values (%s, %s, %s);")
         cursor.execute(query, (reservation_id, product_id, quantity))
+
+        # Update product_quantity
+        new_quantity = current_quantity - quantity
+        query = "update product set product_quantity = %s where product_id = %s;"
+        cursor.execute(query, (new_quantity, product_id))
 
         self.conn.commit()
         return reservation_id
@@ -78,6 +93,35 @@ class ReservationDAO(object):
         except TypeError:
             return -1
 
+        query = "select product_id from reserves where reservation_id = %s;"
+        cursor.execute(query, (reservation_id,))
+
+        # Return products to storage
+        old_product_id = cursor.fetchone()[0]
+
+        query = "select quantity from reserves where product_id = %s and reservation_id = %s;"
+        cursor.execute(query, (old_product_id, reservation_id))
+
+        previous_quantity = cursor.fetchone()[0]
+
+        query = "select product_quantity from product where product_id = %s;"
+        cursor.execute(query, (old_product_id,))
+        current_qty = cursor.fetchone()[0]
+
+        query = "update product set product_quantity = %s where product_id = %s;"
+        cursor.execute(query, (current_qty + previous_quantity, old_product_id))
+
+        # Verify product_quantity
+        query = "select product_quantity from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+        try:
+            current_quantity = cursor.fetchone()[0]
+            if current_quantity - quantity < 0:
+                return -4
+        except TypeError:
+            return -1
+
+        # Update reservation
         query = "delete from reserves where reservation_id = %s;"
         cursor.execute(query, (reservation_id,))
 
@@ -85,6 +129,11 @@ class ReservationDAO(object):
                  + "values (%s, %s, %s);")
 
         cursor.execute(query, (reservation_id, product_id, quantity))
+
+        # Discount products from storage
+        new_quantity = current_quantity - quantity
+        query = "update product set product_quantity = %s where product_id = %s;"
+        cursor.execute(query, (new_quantity, product_id))
 
         query = (
                 "update reservation set customer_id = %s"
@@ -113,6 +162,7 @@ class ReservationDAO(object):
         query = "select quantity from reserves where reservation_id = %s and product_id = %s;"
         cursor.execute(query, (reservation_id, product_id))
 
+        # Verify new product quantity
         try:
             current_quantity = cursor.fetchone()[0]
             new_quantity = current_quantity + quantity
@@ -127,6 +177,21 @@ class ReservationDAO(object):
                      + "values (%s, %s, %s);")
             cursor.execute(query, (reservation_id, product_id, quantity))
             new_quantity = quantity
+
+        # Verify DB product_quantity
+        query = "select product_quantity from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+        try:
+            db_current_quantity = cursor.fetchone()[0]
+            if db_current_quantity < new_quantity:
+                return -4
+        except TypeError:
+            pass
+
+        # Discount products from storage
+        db_new_quantity = db_current_quantity - quantity
+        query = "update product set product_quantity = %s where product_id = %s;"
+        cursor.execute(query, (db_new_quantity, product_id))
 
         self.conn.commit()
 
@@ -151,4 +216,3 @@ class ReservationDAO(object):
         query = "delete from reservation where customer_id = %s;"
         cursor.execute(query, (customer_id,))
         self.conn.commit()
-
