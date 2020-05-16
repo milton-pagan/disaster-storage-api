@@ -1,5 +1,4 @@
 import psycopg2
-from pkg_resources.py2_warn import pre
 
 from api.config.config import get_config
 
