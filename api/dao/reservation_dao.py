@@ -178,15 +178,15 @@ class ReservationDAO(object):
             cursor.execute(query, (reservation_id, product_id, quantity))
             new_quantity = quantity
 
-            # Verify DB product_quantity
-            query = "select product_quantity from product where product_id = %s;"
-            cursor.execute(query, (product_id,))
-            try:
-                db_current_quantity = cursor.fetchone()[0]
-                if db_current_quantity < new_quantity:
-                    return -4
-            except TypeError:
-                pass
+        # Verify DB product_quantity
+        query = "select product_quantity from product where product_id = %s;"
+        cursor.execute(query, (product_id,))
+        try:
+            db_current_quantity = cursor.fetchone()[0]
+            if db_current_quantity < new_quantity:
+                return -4
+        except TypeError:
+            pass
 
         # Discount products from storage
         db_new_quantity = db_current_quantity - quantity
