@@ -7,7 +7,12 @@ class CreditCardDAO(object):
         self.conn = psycopg2.connect(**get_config())
 
     def insert_credit_card(self, cc_type, cc_number, customer_id):
-        cc_id = 1
+        cursor = self.conn.cursor()
+        query = "INSERT INTO credit_card(cc_type, cc_number, customer_id) VALUES (%s, %s, %s) returning cc_id;"
+        cursor.execute(query, (cc_type, cc_number, customer_id))
+        cc_id = cursor.fetchone()[0]
+        self.conn.commit()
+
         return cc_id
 
     def update_credit_card(self, cc_id, cc_type, cc_number, customer_id):

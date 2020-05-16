@@ -7,14 +7,6 @@ from flask import jsonify
 
 
 class CustomerHandler(object):
-    def build_customer(self, record):
-        object_dict = {}
-        object_dict["customer_id"] = record[0]
-        object_dict["customer_first_name"] = record[1]
-        object_dict["customer_last_name"] = record[2]
-        object_dict["customer_city"] = record[3]
-        object_dict["location_id"] = record[4]
-        return object_dict
 
     def build_customer_user(self, record):
         object_dict = {}
@@ -24,6 +16,14 @@ class CustomerHandler(object):
         object_dict["customer_city"] = record[3]
         object_dict["location_id"] = record[4]
         object_dict["user_id"] = record[5]
+
+        return object_dict
+
+    def build_credit_card(self, record):
+        object_dict = {}
+        object_dict["cc_type"] = record[0]
+        object_dict["cc_number"] = record[1]
+        object_dict["customer_id"] = record[2]
 
         return object_dict
 
@@ -94,64 +94,73 @@ class CustomerHandler(object):
     # Supplier insertion, update and deletion
 
     def insert_customer(self, customer):
+
+        customer_dao = CustomerDAO()
+        user_dao = UserDAO()
+        location_dao = LocationDAO()
+        cc_dao = CreditCardDAO()
+
         try:
             customer_first_name = customer["customer_first_name"]
             customer_last_name = customer["customer_last_name"]
             customer_city = customer["customer_city"]
+            customer_address = customer["customer_address"]
             latitude = customer["latitude"]
             longitude = customer["longitude"]
-            customer_username = customer["customer_username"]
-            customer_password = customer["customer_password"]
-            customer_phone = customer["customer_phone"]
-            customer_cc_type = customer["cc_type"]
-            customer_cc_number = customer["cc_number"]
+            username = customer["username"]
+            password = customer["password"]
+            phone = customer["phone"]
 
         except KeyError:
             ErrorHandler().bad_request()
 
-            if (
-                customer_first_name
-                and customer_last_name
-                and customer_city
-                and latitude
-                and longitude
-                and customer_username
-                and customer_password
-                and customer_phone
-                and customer_cc_type
-                and customer_cc_number
-            ):
-                location_id = LocationDAO().insert_location(latitude, longitude)
-                user_id = UserDAO().insert_user(
-                    customer_username, customer_password, customer_phone
-                )
-                customer_id = CustomerDAO().insert_customer(
+        user_id = user_dao.insert_user(username, password, phone)
+        location_id = location_dao.insert_location(latitude, longitude)
+        customer_id = customer_dao.insert_customer(
+                customer_first_name,
+                customer_last_name,
+                customer_city,
+                location_id,
+                user_id,
+                customer_address,
+            )
+
+        return (
+            self.build_customer_user(
+                (
+                    customer_id,
                     customer_first_name,
                     customer_last_name,
                     customer_city,
                     location_id,
                     user_id,
                 )
-                cc_id = CreditCardDAO().insert_credit_card(
-                    customer_cc_type, customer_cc_number, customer_id
+            ),
+            201,
+        )
+
+    def insert_credit_card_by_customer_id(self, customer_id, card):
+        credit_card_dao = CreditCardDAO()
+
+        try:
+            cc_type = card["cc_type"]
+            cc_number = card["cc_number"]
+
+        except KeyError:
+            ErrorHandler().bad_request()
+
+        credit_id = credit_card_dao.insert_credit_card(cc_type, cc_number, customer_id)
+
+        return (
+            self.build_credit_card(
+                (
+                    cc_type,
+                    cc_number,
+                    customer_id
                 )
-                return (
-                    self.build_customer_user(
-                        (
-                            customer_id,
-                            customer_first_name,
-                            customer_last_name,
-                            customer_city,
-                            location_id,
-                            user_id,
-                        )
-                    ),
-                    201,
-                )
-            else:
-                return ErrorHandler().bad_request()
-        else:
-            return ErrorHandler().bad_request()
+            ),
+            201,
+        )
 
     def update_customer(self, customer_id, customer):
         if not self.get_customer_by_id(customer_id):
@@ -164,29 +173,20 @@ class CustomerHandler(object):
             latitude = customer["latitude"]
             longitude = customer["longitude"]
             cc_id = customer["cc_id"]
-            customer_cc_type = customer["cc_type"]
-            customer_cc_number = customer["cc_number"]
+            cc_type = customer["cc_type"]
+            cc_number = customer["cc_number"]
 
         except KeyError:
             ErrorHandler().bad_request()
 
-            if (
-                customer_first_name
-                and customer_last_name
-                and customer_city
-                and latitude
-                and longitude
-            ):
-                customer_id, location_id = CustomerDAO().update_customer(
-                    customer_id, customer_first_name, customer_last_name, customer_city,
-                )
-                LocationDAO().update_location(location_id, latitude, longitude)
-                CreditCardDAO().update_credit_card(
-                    cc_id, customer_cc_number, customer_cc_type, customer_id
+            customer_id, location_id = CustomerDAO().update_customer(customer_first_name, customer_last_name, customer_city,)
+            LocationDAO().update_location(location_id, latitude, longitude)
+            CreditCardDAO().update_credit_card(
+                    cc_id, cc_number, cc_type, customer_id
                 )
 
-                return (
-                    self.build_customer(
+            return (
+                    self.build_customer_user(
                         (
                             customer_id,
                             customer_first_name,
@@ -197,10 +197,7 @@ class CustomerHandler(object):
                     ),
                     200,
                 )
-            else:
-                return ErrorHandler().bad_request()
-        else:
-            return ErrorHandler().bad_request()
+
 
     def delete_customer(self, customer_id):
         if not self.get_customer_by_id(customer_id):

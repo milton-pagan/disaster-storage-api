@@ -6,31 +6,13 @@ from flask import jsonify
 
 
 class SupplierHandler(object):
+
     def build_supplier(self, record):
         object_dict = {}
         object_dict["supplier_id"] = record[0]
         object_dict["supplier_name"] = record[1]
         object_dict["supplier_city"] = record[2]
         object_dict["location_id"] = record[3]
-        return object_dict
-
-    def build_supplier_user(self, record):
-        object_dict = {}
-        object_dict["supplier_id"] = record[0]
-        object_dict["supplier_name"] = record[1]
-        object_dict["supplier_city"] = record[2]
-        object_dict["location_id"] = record[3]
-        object_dict["user_id"] = record[4]
-        return object_dict
-
-    def build_product(self, record):
-        object_dict = {}
-        object_dict["product_id"] = record[0]
-        object_dict["product_name"] = record[1]
-        object_dict["product_quantity"] = record[2]
-        object_dict["product_price"] = record[3]
-        object_dict["product_description"] = record[4]
-        object_dict["location_id"] = record[5]
         return object_dict
 
     # General Supplier Operations
@@ -77,51 +59,38 @@ class SupplierHandler(object):
 
     def insert_supplier(self, supplier):
         try:
-            supplier_name = supplier["customer_first_name"]
-            supplier_city = supplier["customer_city"]
+            username = supplier["username"]
+            password = supplier["password"]
+            phone = supplier["phone"]
+            supplier_name = supplier["supplier_name"]
+            supplier_city = supplier["supplier_city"]
             latitude = supplier["latitude"]
             longitude = supplier["longitude"]
-            supplier_username = supplier["supplier_username"]
-            supplier_password = supplier["supplier_password"]
-            supplier_phone = supplier["supplier_phone"]
 
         except KeyError:
             ErrorHandler().bad_request()
 
-            if (
-                supplier_name
-                and supplier_city
-                and latitude
-                and longitude
-                and supplier_username
-                and supplier_password
-                and supplier_phone
-            ):
+        location_id = LocationDAO().insert_location(latitude, longitude)
+        supplier_id = SupplierDAO().insert_supplier(username, password, phone, supplier_name, supplier_city, location_id)
 
-                location_id = LocationDAO().insert_location(latitude, longitude)
-                supplier_id = SupplierDAO().insert_supplier(
-                    supplier_name, supplier_city, location_id
-                )
-                user_id = UserDAO().insert_user(
-                    supplier_username, supplier_password, supplier_phone
-                )
+        return (
+            self.build_supplier(
+                (
+                    supplier_id,
+                    supplier_name,
+                    supplier_city,
+                    location_id
 
-                return (
-                    self.build_supplier_user(
-                        (
-                            supplier_id,
-                            supplier_name,
-                            supplier_city,
-                            location_id,
-                            user_id,
-                        )
-                    ),
-                    201,
                 )
-            else:
-                return ErrorHandler().bad_request()
-        else:
-            return ErrorHandler().bad_request()
+            ),
+            201,
+        )
+
+    def insert_supplies_product_by_supplier_id(self, customer_id, product_id):
+        result = SupplierDAO().insert_supplies_product_by_supplier_id(customer_id,product_id)
+        if not result:
+            return ErrorHandler().not_found()
+        return jsonify(SupplierProducts=result)
 
     def update_supplier(self, supplier_id, supplier):
         if not self.get_supplier_by_id(supplier_id):

@@ -20,10 +20,10 @@ class AdminDAO(object):
 
         return cursor.fetchone()
 
-    def insert_admin(self, admin_name):
+    def insert_admin(self, admin_name, user_id):
         cursor = self.conn.cursor()
-        query = "INSERT INTO admin(admin_name) VALUES (%s);"
-        cursor.execute(query, (admin_name,))
+        query = "INSERT INTO admin(admin_name, user_id) VALUES (%s, %s) returning admin_id;"
+        cursor.execute(query, (admin_name, user_id))
         admin_id = cursor.fetchone()[0]
         self.conn.commit()
         return admin_id

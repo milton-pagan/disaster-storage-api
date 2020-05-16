@@ -34,7 +34,7 @@ class SupplierDAO(object):
 
     def get_products_by_supplier_id(self, supplier_id):
         cursor = self.conn.cursor(cursor_factory=psycopg2.extras.RealDictCursor)
-        query = "SELECT product_name FROM product NATURAL INNER JOIN supplies WHERE supplier_id=%s ORDER BY product_name;"
+        query = "SELECT product_name, product_id FROM product NATURAL INNER JOIN supplies WHERE supplier_id=%s ORDER BY product_name;"
         cursor.execute(query, (supplier_id,))
 
         return cursor.fetchall()
@@ -48,7 +48,8 @@ class SupplierDAO(object):
 
     def insert_supplier(self, username, password, phone, supplier_name, supplier_city, location_id):
         cursor = self.conn.cursor()
-        query = "INSERT INTO supplier(username, password, phone, supplier_name, supplier_city, location_id) VALUES (%s, %s, %s, %s, %s, %s);"
+        query = "INSERT INTO supplier(username, password, phone, supplier_name, supplier_city, location_id)"\
+                +"VALUES (%s, %s, %s, %s, %s, %s) returning supplier_id;"
         cursor.execute(
             query,
             (
@@ -64,6 +65,18 @@ class SupplierDAO(object):
         self.conn.commit()
         return supplier_id
 
+    def insert_supplies_product_by_supplier_id(self, supplier_id, product_id):
+        cursor = self.conn.cursor()
+        query = "INSERT INTO supplies(supplier_id, product_id) VALUES (%s, %s);"
+        cursor.execute(
+            query,
+            (
+                supplier_id,
+                product_id,
+            ),
+        )
+        self.conn.commit()
+        return supplier_id, product_id
 
     def update_supplier(self, supplier_id, supplier_name, supplier_city, location_id):
         return supplier_id, location_id

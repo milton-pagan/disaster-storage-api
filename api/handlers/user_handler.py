@@ -24,23 +24,28 @@ class UserHandler(object):
             return jsonify(user=result), 200
 
     def insert_user(self, form):
-        if form and len(form) == 3:
+
+        user_dao = UserDAO()
+
+        try:
             username = form["username"]
             password = form["password"]
             phone_number = form["phone_number"]
-            if username and password and phone_number:
-                result = UserDAO()
-                user_id = result.insert(username, password, phone_number)
-                result_dict = {}
-                result_dict["user_id"] = user_id
-                result_dict["username"] = username
-                result_dict["password"] = password
-                result_dict["phone_number"] = phone_number
-                return jsonify(User=result_dict), 201
-            else:
-                return ErrorHandler().bad_request()
-        else:
+        except KeyError:
             return ErrorHandler().bad_request()
+
+        user_id = user_dao.insert_user(username, password, phone_number,)
+
+        return (self.build_user_dict(
+                    (
+                        user_id,
+                        username,
+                        password,
+                        phone_number
+                    )
+            ),
+            201,
+        )
 
     def updated_user(self, user_id, user):
         if not self.get_user_by_id(user_id):
